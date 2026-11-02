@@ -1,0 +1,66 @@
+{
+  "project": "Project 1",
+  "goal": "",
+  "targetDate": "2026-12-31",
+  "created": "2026-11-02",
+  "updated": "2026-11-02",
+  "schemaVersion": 2,
+  "keyPrefix": "PA",
+  "nextKeyNum": 104,
+  "sections": [
+    "Planning",
+    "Delivery"
+  ],
+  "rules": [],
+  "backlog": [],
+  "tasks": [
+    {
+      "id": "task-pa101",
+      "key": "PA-101",
+      "title": "Define the project goal",
+      "section": "Planning",
+      "start": "2026-11-02",
+      "due": "2026-11-09",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    },
+    {
+      "id": "task-pa102",
+      "key": "PA-102",
+      "title": "Draft the project plan",
+      "section": "Planning",
+      "start": "2026-11-02",
+      "due": "2026-11-16",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    },
+    {
+      "id": "task-pa103",
+      "key": "PA-103",
+      "title": "Hold the kickoff meeting",
+      "section": "Delivery",
+      "start": "2026-11-02",
+      "due": "2026-11-23",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    }
+  ]
+}

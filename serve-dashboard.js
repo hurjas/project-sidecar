@@ -1,4 +1,4 @@
-// Sojuli Digital — static file server + board storage.
+// Project SideCar — static file server + board storage.
 //
 // Exists so project-plan-dashboard.html can read AND write its boards.
 // Opening the dashboard straight off disk (file://) blocks the read, which is
@@ -564,7 +564,7 @@ http.createServer((req, res) => {
   });
 }).listen(PORT, '127.0.0.1', () => {
   const n = (readIndex() || { boards: [] }).boards.length;
-  console.log('Sojuli Digital');
+  console.log('Project SideCar');
   console.log('  http://localhost:' + PORT + '/project-plan-dashboard.html');
   console.log('  serving ' + ROOT);
   console.log('  ' + n + ' board(s) in boards/, backup taken before every save');

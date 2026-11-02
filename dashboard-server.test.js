@@ -570,7 +570,7 @@ test('a folder with no tasks.json starts with an empty list instead of crashing'
 test('first start creates one board per seed file, in file order, and never writes the seeds', async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bmsrv-'));
   fs.mkdirSync(path.join(dir, 'seeds'));
-  const a = newPlan('Budget Master'), b = newPlan('Fix.ly'), c = newPlan('Kin & Letter');
+  const a = newPlan('Project 1'), b = newPlan('Project 3'), c = newPlan('Project 4');
   fs.writeFileSync(path.join(dir, 'seeds', '01-a.json'), JSON.stringify(a));
   fs.writeFileSync(path.join(dir, 'seeds', '03-c.json'), JSON.stringify(c));
   fs.writeFileSync(path.join(dir, 'seeds', '02-b.json'), JSON.stringify(b));
@@ -579,11 +579,11 @@ test('first start creates one board per seed file, in file order, and never writ
   await serverIn(dir, async ({ api }) => {
     const out = await api('GET', '/api/boards');
     assert.deepEqual(out.json.boards, [
-      { id: 'budget-master', name: 'Budget Master' },
-      { id: 'fix-ly', name: 'Fix.ly' },
-      { id: 'kin-letter', name: 'Kin & Letter' }], 'a broken seed is skipped, the rest still load');
-    const one = await api('GET', '/api/boards/fix-ly');
-    assert.equal(one.json.project, 'Fix.ly');
+      { id: 'project-1', name: 'Project 1' },
+      { id: 'project-3', name: 'Project 3' },
+      { id: 'project-4', name: 'Project 4' }], 'a broken seed is skipped, the rest still load');
+    const one = await api('GET', '/api/boards/project-3');
+    assert.equal(one.json.project, 'Project 3');
   });
   const after = fs.readdirSync(path.join(dir, 'seeds')).map(f => fs.readFileSync(path.join(dir, 'seeds', f), 'utf8'));
   assert.deepEqual(after, before, 'seed files are read, never written');

@@ -1,0 +1,66 @@
+{
+  "project": "Project 3",
+  "goal": "",
+  "targetDate": "2026-12-31",
+  "created": "2026-11-02",
+  "updated": "2026-11-02",
+  "schemaVersion": 2,
+  "keyPrefix": "PC",
+  "nextKeyNum": 104,
+  "sections": [
+    "Planning",
+    "Delivery"
+  ],
+  "rules": [],
+  "backlog": [],
+  "tasks": [
+    {
+      "id": "task-pc101",
+      "key": "PC-101",
+      "title": "Research options",
+      "section": "Planning",
+      "start": "2026-11-02",
+      "due": "2026-11-09",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    },
+    {
+      "id": "task-pc102",
+      "key": "PC-102",
+      "title": "Choose a vendor",
+      "section": "Planning",
+      "start": "2026-11-02",
+      "due": "2026-11-23",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    },
+    {
+      "id": "task-pc103",
+      "key": "PC-103",
+      "title": "Approve the budget",
+      "section": "Delivery",
+      "start": "2026-11-02",
+      "due": "2026-12-02",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    }
+  ]
+}

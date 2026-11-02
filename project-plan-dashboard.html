@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sojuli Digital</title>
+<title>Project SideCar</title>
 <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="vendor/chart.umd.min.js"></script>
 <style>
@@ -267,7 +267,7 @@ ul.plain li .name{flex:1}
 <nav class="boardtabs" id="boardTabs" aria-label="Boards"></nav>
 <div class="topbar">
   <div>
-    <h1 id="boardTitle">Sojuli Digital</h1>
+    <h1 id="boardTitle">Project SideCar</h1>
     <div class="meta" id="metaLine">Loading ledger…</div>
   </div>
   <div class="actions">
@@ -361,7 +361,7 @@ ul.plain li .name{flex:1}
       </div>
       <div class="field"><label for="sPrefix">Ticket prefix</label>
         <input id="sPrefix" maxlength="6" placeholder="PRJ">
-        <div class="hint">Names new tickets. BM gives you BM-101. Existing keys never change.</div></div>
+        <div class="hint">Names new tickets. PA gives you PA-101. Existing keys never change.</div></div>
       <div class="field"><label for="sSections">Sections, one per line</label>
         <textarea id="sSections" rows="3"></textarea></div>
       <div class="field"><label for="sRules">Rules, one per line</label>
@@ -765,281 +765,264 @@ let state = null, ledger = null, source = '', dirty = false, canWrite = false;
 let standalone = false;
 let SEEDS = [
   {
-    "project": "Budget Master",
+    "project": "Project 1",
     "goal": "",
     "targetDate": "2026-12-31",
-    "created": "2026-10-17",
-    "updated": "2026-10-17",
+    "created": "2026-11-02",
+    "updated": "2026-11-02",
     "schemaVersion": 2,
-    "keyPrefix": "BM",
-    "nextKeyNum": 104,
-    "sections": [
-      "Product",
-      "Operations"
-    ],
-    "rules": [],
-    "backlog": [],
-    "tasks": [
-      {
-        "id": "task-bm101",
-        "key": "BM-101",
-        "title": "Confirm the latest Budget Master code is on GitHub",
-        "section": "Operations",
-        "start": "2026-10-17",
-        "due": "2026-10-24",
-        "done": null,
-        "status": "not-started",
-        "milestone": false,
-        "epic": false,
-        "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
-        "acceptanceCriteria": [],
-        "history": []
-      },
-      {
-        "id": "task-bm102",
-        "key": "BM-102",
-        "title": "Set the scope for the next release",
-        "section": "Product",
-        "start": "2026-10-17",
-        "due": "2026-10-31",
-        "done": null,
-        "status": "not-started",
-        "milestone": false,
-        "epic": false,
-        "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
-        "acceptanceCriteria": [],
-        "history": []
-      },
-      {
-        "id": "task-bm103",
-        "key": "BM-103",
-        "title": "Retire the old project board inside the Budget Master repo",
-        "section": "Operations",
-        "start": "2026-10-17",
-        "due": "2026-11-07",
-        "done": null,
-        "status": "not-started",
-        "milestone": false,
-        "epic": false,
-        "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
-        "acceptanceCriteria": [],
-        "history": []
-      }
-    ]
-  },
-  {
-    "project": "LeaderStack",
-    "goal": "",
-    "targetDate": "2026-12-31",
-    "created": "2026-10-17",
-    "updated": "2026-10-17",
-    "schemaVersion": 2,
-    "keyPrefix": "LS",
-    "nextKeyNum": 105,
-    "sections": [
-      "YouTube",
-      "The Switch",
-      "Products"
-    ],
-    "rules": [],
-    "backlog": [],
-    "tasks": [
-      {
-        "id": "task-ls101",
-        "key": "LS-101",
-        "title": "Validate the niche: first-time, new and accidental managers",
-        "section": "YouTube",
-        "start": "2026-10-17",
-        "due": "2026-10-31",
-        "done": null,
-        "status": "not-started",
-        "milestone": false,
-        "epic": false,
-        "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
-        "acceptanceCriteria": [],
-        "history": []
-      },
-      {
-        "id": "task-ls102",
-        "key": "LS-102",
-        "title": "Find outlier videos to model with vidIQ",
-        "section": "YouTube",
-        "start": "2026-10-17",
-        "due": "2026-10-27",
-        "done": null,
-        "status": "not-started",
-        "milestone": false,
-        "epic": false,
-        "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
-        "acceptanceCriteria": [],
-        "history": []
-      },
-      {
-        "id": "task-ls103",
-        "key": "LS-103",
-        "title": "Set the next milestone for The Switch",
-        "section": "The Switch",
-        "start": "2026-10-17",
-        "due": "2026-10-24",
-        "done": null,
-        "status": "not-started",
-        "milestone": false,
-        "epic": false,
-        "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
-        "acceptanceCriteria": [],
-        "history": []
-      },
-      {
-        "id": "task-ls104",
-        "key": "LS-104",
-        "title": "Scope the platform maturity model as a LeaderStack feature",
-        "section": "Products",
-        "start": "2026-10-17",
-        "due": "2026-11-14",
-        "done": null,
-        "status": "not-started",
-        "milestone": false,
-        "epic": false,
-        "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
-        "acceptanceCriteria": [],
-        "history": []
-      }
-    ]
-  },
-  {
-    "project": "Fix.ly",
-    "goal": "",
-    "targetDate": "2026-12-31",
-    "created": "2026-10-17",
-    "updated": "2026-10-17",
-    "schemaVersion": 2,
-    "keyPrefix": "FX",
+    "keyPrefix": "PA",
     "nextKeyNum": 104,
     "sections": [
       "Planning",
-      "Build"
+      "Delivery"
     ],
     "rules": [],
     "backlog": [],
     "tasks": [
       {
-        "id": "task-fx101",
-        "key": "FX-101",
-        "title": "Pick a restart date once The Switch and Budget Master are done",
+        "id": "task-pa101",
+        "key": "PA-101",
+        "title": "Define the project goal",
         "section": "Planning",
-        "start": "2026-10-17",
+        "start": "2026-11-02",
+        "due": "2026-11-09",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Example task. Edit it or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-pa102",
+        "key": "PA-102",
+        "title": "Draft the project plan",
+        "section": "Planning",
+        "start": "2026-11-02",
         "due": "2026-11-16",
         "done": null,
         "status": "not-started",
         "milestone": false,
         "epic": false,
         "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "description": "Example task. Edit it or delete it.",
         "acceptanceCriteria": [],
         "history": []
       },
       {
-        "id": "task-fx102",
-        "key": "FX-102",
-        "title": "Re-read the PRD and ADRs before restarting",
-        "section": "Planning",
-        "start": "2026-10-17",
-        "due": "2026-12-01",
+        "id": "task-pa103",
+        "key": "PA-103",
+        "title": "Hold the kickoff meeting",
+        "section": "Delivery",
+        "start": "2026-11-02",
+        "due": "2026-11-23",
         "done": null,
         "status": "not-started",
         "milestone": false,
         "epic": false,
         "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
-        "acceptanceCriteria": [],
-        "history": []
-      },
-      {
-        "id": "task-fx103",
-        "key": "FX-103",
-        "title": "Set up the repo with the REPO_SETUP runbook",
-        "section": "Build",
-        "start": "2026-10-17",
-        "due": "2026-12-16",
-        "done": null,
-        "status": "not-started",
-        "milestone": false,
-        "epic": false,
-        "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "description": "Example task. Edit it or delete it.",
         "acceptanceCriteria": [],
         "history": []
       }
     ]
   },
   {
-    "project": "Kin & Letter",
+    "project": "Project 2",
     "goal": "",
     "targetDate": "2026-12-31",
-    "created": "2026-10-17",
-    "updated": "2026-10-17",
+    "created": "2026-11-02",
+    "updated": "2026-11-02",
     "schemaVersion": 2,
-    "keyPrefix": "KL",
+    "keyPrefix": "PB",
     "nextKeyNum": 104,
     "sections": [
-      "Store",
-      "Brand"
+      "Planning",
+      "Delivery"
     ],
     "rules": [],
     "backlog": [],
     "tasks": [
       {
-        "id": "task-kl101",
-        "key": "KL-101",
-        "title": "Check in with the store operators",
-        "section": "Store",
-        "start": "2026-10-17",
-        "due": "2026-10-24",
+        "id": "task-pb101",
+        "key": "PB-101",
+        "title": "Gather requirements",
+        "section": "Planning",
+        "start": "2026-11-02",
+        "due": "2026-11-12",
         "done": null,
         "status": "not-started",
         "milestone": false,
         "epic": false,
         "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "description": "Example task. Edit it or delete it.",
         "acceptanceCriteria": [],
         "history": []
       },
       {
-        "id": "task-kl102",
-        "key": "KL-102",
-        "title": "Confirm the kinandletter.com domain",
-        "section": "Brand",
-        "start": "2026-10-17",
-        "due": "2026-10-31",
+        "id": "task-pb102",
+        "key": "PB-102",
+        "title": "Review the draft with stakeholders",
+        "section": "Delivery",
+        "start": "2026-11-02",
+        "due": "2026-11-19",
         "done": null,
         "status": "not-started",
         "milestone": false,
         "epic": false,
         "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "description": "Example task. Edit it or delete it.",
         "acceptanceCriteria": [],
         "history": []
       },
       {
-        "id": "task-kl103",
-        "key": "KL-103",
-        "title": "Review results for the message-card jewelry hero product",
-        "section": "Store",
-        "start": "2026-10-17",
+        "id": "task-pb103",
+        "key": "PB-103",
+        "title": "Set the launch date",
+        "section": "Delivery",
+        "start": "2026-11-02",
+        "due": "2026-11-30",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Example task. Edit it or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      }
+    ]
+  },
+  {
+    "project": "Project 3",
+    "goal": "",
+    "targetDate": "2026-12-31",
+    "created": "2026-11-02",
+    "updated": "2026-11-02",
+    "schemaVersion": 2,
+    "keyPrefix": "PC",
+    "nextKeyNum": 104,
+    "sections": [
+      "Planning",
+      "Delivery"
+    ],
+    "rules": [],
+    "backlog": [],
+    "tasks": [
+      {
+        "id": "task-pc101",
+        "key": "PC-101",
+        "title": "Research options",
+        "section": "Planning",
+        "start": "2026-11-02",
+        "due": "2026-11-09",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Example task. Edit it or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-pc102",
+        "key": "PC-102",
+        "title": "Choose a vendor",
+        "section": "Planning",
+        "start": "2026-11-02",
+        "due": "2026-11-23",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Example task. Edit it or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-pc103",
+        "key": "PC-103",
+        "title": "Approve the budget",
+        "section": "Delivery",
+        "start": "2026-11-02",
+        "due": "2026-12-02",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Example task. Edit it or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      }
+    ]
+  },
+  {
+    "project": "Project 4",
+    "goal": "",
+    "targetDate": "2026-12-31",
+    "created": "2026-11-02",
+    "updated": "2026-11-02",
+    "schemaVersion": 2,
+    "keyPrefix": "PD",
+    "nextKeyNum": 104,
+    "sections": [
+      "Planning",
+      "Delivery"
+    ],
+    "rules": [],
+    "backlog": [],
+    "tasks": [
+      {
+        "id": "task-pd101",
+        "key": "PD-101",
+        "title": "Write the status update",
+        "section": "Delivery",
+        "start": "2026-11-02",
         "due": "2026-11-07",
         "done": null,
         "status": "not-started",
         "milestone": false,
         "epic": false,
         "epicKey": null,
-        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "description": "Example task. Edit it or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-pd102",
+        "key": "PD-102",
+        "title": "Schedule the monthly review",
+        "section": "Planning",
+        "start": "2026-11-02",
+        "due": "2026-11-14",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Example task. Edit it or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-pd103",
+        "key": "PD-103",
+        "title": "Close out open action items",
+        "section": "Delivery",
+        "start": "2026-11-02",
+        "due": "2026-11-22",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Example task. Edit it or delete it.",
         "acceptanceCriteria": [],
         "history": []
       }
@@ -2414,7 +2397,7 @@ function blDrop(e){
 
 /* Backlog items are edited in their own panel rather than the ticket modal.
    They have no section, dates or status, and a modal full of disabled fields
-   would read as broken. Keyed by BM- number, not index, so a reorder or a
+   would read as broken. Keyed by ticket number, not index, so a reorder or a
    deletion underneath cannot point the panel at the wrong item. */
 let blOpenKey = null;
 
@@ -3019,13 +3002,13 @@ function renderCharts(){
    come from state.project, so renaming the board in Settings renames it
    everywhere and a packaged copy needs no find-and-replace. */
 function renderBoardIdentity(){
-  const name = (state && state.project) ? state.project : 'Sojuli Digital';
+  const name = (state && state.project) ? state.project : 'Project SideCar';
   const parts = name.trim().split(/\s+/);
   const head = parts.length > 1 ? parts.slice(0,-1).join(' ') : name;
   const tail = parts.length > 1 ? parts[parts.length-1] : '';
   const h1 = document.getElementById('boardTitle');
-  if (h1) h1.innerHTML = esc(head) + (tail ? ' <span>' + esc(tail) + '</span>' : '') + ' — Sojuli Digital';
-  document.title = name + ' — Sojuli Digital';
+  if (h1) h1.innerHTML = esc(head) + (tail ? ' <span>' + esc(tail) + '</span>' : '') + ' — Project SideCar';
+  document.title = name + ' — Project SideCar';
 }
 
 function renderAll(){

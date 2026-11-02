@@ -1,5 +1,5 @@
 @echo off
-title Sojuli Digital
+title Project SideCar
 
 cd /d "%~dp0"
 
@@ -14,7 +14,7 @@ if errorlevel 1 (
   exit /b 1
 )
 
-echo Starting Sojuli Digital...
+echo Starting Project SideCar...
 echo Keep this window open while you work. Close it or press Ctrl+C to stop.
 echo.
 

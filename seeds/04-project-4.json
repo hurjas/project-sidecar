@@ -1,0 +1,66 @@
+{
+  "project": "Project 4",
+  "goal": "",
+  "targetDate": "2026-12-31",
+  "created": "2026-11-02",
+  "updated": "2026-11-02",
+  "schemaVersion": 2,
+  "keyPrefix": "PD",
+  "nextKeyNum": 104,
+  "sections": [
+    "Planning",
+    "Delivery"
+  ],
+  "rules": [],
+  "backlog": [],
+  "tasks": [
+    {
+      "id": "task-pd101",
+      "key": "PD-101",
+      "title": "Write the status update",
+      "section": "Delivery",
+      "start": "2026-11-02",
+      "due": "2026-11-07",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    },
+    {
+      "id": "task-pd102",
+      "key": "PD-102",
+      "title": "Schedule the monthly review",
+      "section": "Planning",
+      "start": "2026-11-02",
+      "due": "2026-11-14",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    },
+    {
+      "id": "task-pd103",
+      "key": "PD-103",
+      "title": "Close out open action items",
+      "section": "Delivery",
+      "start": "2026-11-02",
+      "due": "2026-11-22",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    }
+  ]
+}

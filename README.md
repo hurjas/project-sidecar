@@ -1,12 +1,12 @@
-# Sojuli Digital
+# Project SideCar
 
-The Sojuli Digital business board. One tab per business, each with its own
-high-level tasks, charts, backlog and settings:
+A task board with one tab per project. Each project has its own tasks, charts,
+backlog and settings. It ships with four example projects:
 
-- Budget Master
-- LeaderStack (The Switch is a section on this board)
-- Fix.ly
-- Kin & Letter
+- Project 1
+- Project 2
+- Project 3
+- Project 4
 
 Every status change is dated, so each board doubles as a record of what moved
 and when. One HTML file, JSON files, an optional Node server. No build step, no
@@ -20,7 +20,7 @@ Two ways. Pick one.
 
 Unzip the folder and double-click `project-plan-dashboard.html`.
 
-The four business boards open with their starter tasks. Every change saves to
+The four example projects open with their starter tasks. Every change saves to
 your browser automatically. Clearing your browser data clears the board, so use Export to
 keep a copy.
 
@@ -44,17 +44,17 @@ Port 8080 taken? Run `PORT=8090 node serve-dashboard.js` (Mac or Linux) or
 
 ## Make it yours
 
-Each board starts with a few starter tasks based on what was known about the
-business when this copy was made. Edit or delete them.
+Each board starts with a few example tasks. Rename the projects and edit or
+delete the tasks.
 
-1. Open a business tab, then Settings.
-2. Write a one-sentence goal for the business and set a target date.
+1. Open a project tab, then Settings.
+2. Write a one-sentence goal for the project and set a target date.
 3. Adjust the sections, one per line.
-4. Write 3 to 5 rules, such as what each business will not take on this quarter.
+4. Write 3 to 5 rules, such as what the project will not take on this quarter.
 5. Click Save board details.
 6. Add tasks with + New ticket. Keep them high level: milestones, decisions,
    launches. Detailed work belongs in each project's own tracker.
-7. Add a business later with + New board in the tab row.
+7. Add a project later with + New board in the tab row.
 
 Settings also lets you rename, recolour, reorder, add and remove the board
 columns, and decide which column means new, which means done, and where a
@@ -194,7 +194,7 @@ suite that reads live data cannot tell a regression from a Tuesday.
 
 ```
 project-plan-dashboard.html   the board, everything in one file
-seeds/                        the four starting boards, copied into boards/ on first start
+seeds/                        the four example boards, copied into boards/ on first start
 boards/                       your boards (created by the server, not in Git)
 serve-dashboard.js            static server plus the save endpoint
 start-dashboard.bat           Windows launcher

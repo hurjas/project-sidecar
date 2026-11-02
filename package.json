@@ -1,7 +1,7 @@
 {
-  "name": "sojuli-board",
+  "name": "project-sidecar",
   "private": true,
-  "description": "Sojuli Digital business board: one tab per business with high-level tasks. Open the HTML on its own, or run the server to keep boards on disk.",
+  "description": "Project SideCar: a task board with one tab per project. Open the HTML on its own, or run the server to keep boards on disk.",
   "scripts": {
     "start": "node serve-dashboard.js",
     "dashboard": "node serve-dashboard.js",

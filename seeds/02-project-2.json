@@ -1,0 +1,66 @@
+{
+  "project": "Project 2",
+  "goal": "",
+  "targetDate": "2026-12-31",
+  "created": "2026-11-02",
+  "updated": "2026-11-02",
+  "schemaVersion": 2,
+  "keyPrefix": "PB",
+  "nextKeyNum": 104,
+  "sections": [
+    "Planning",
+    "Delivery"
+  ],
+  "rules": [],
+  "backlog": [],
+  "tasks": [
+    {
+      "id": "task-pb101",
+      "key": "PB-101",
+      "title": "Gather requirements",
+      "section": "Planning",
+      "start": "2026-11-02",
+      "due": "2026-11-12",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    },
+    {
+      "id": "task-pb102",
+      "key": "PB-102",
+      "title": "Review the draft with stakeholders",
+      "section": "Delivery",
+      "start": "2026-11-02",
+      "due": "2026-11-19",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    },
+    {
+      "id": "task-pb103",
+      "key": "PB-103",
+      "title": "Set the launch date",
+      "section": "Delivery",
+      "start": "2026-11-02",
+      "due": "2026-11-30",
+      "done": null,
+      "status": "not-started",
+      "milestone": false,
+      "epic": false,
+      "epicKey": null,
+      "description": "Example task. Edit it or delete it.",
+      "acceptanceCriteria": [],
+      "history": []
+    }
+  ]
+}
