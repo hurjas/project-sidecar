@@ -1,0 +1,3040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sojuli Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="vendor/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#F5F5F4; --surface:#FFFFFF; --border:#E5E4E2; --text:#1C1C1E; --text-2:#6B6B6B; --text-3:#9A9A98;
+  --orange:#FF8200; --orange-dark:#E8630A; --smoke:#3B3B3B; --gray:#4B4B4B;
+  --green:#2E7D32; --red:#C62828; --blue:#1565C0; --amber:#B26A00;
+  --col:#EFEEEC;
+  --radius:12px; --radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Ubuntu',sans-serif;background:var(--bg);color:var(--text);padding:0 0 4vh}
+
+/* ---------- top bar ---------- */
+.topbar{background:var(--smoke);color:#fff;padding:14px 2vw;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.topbar h1{font-size:1.15rem;font-weight:700}
+.topbar h1 span{color:var(--orange)}
+.topbar .meta{font-size:.74rem;color:#C9C8C6;margin-top:3px}
+.topbar .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{font-family:inherit;font-size:.8rem;font-weight:500;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--radius-sm);padding:7px 14px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--orange)}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:#fff}
+.btn.primary:hover{background:var(--orange-dark);border-color:var(--orange-dark)}
+.btn.ghost{background:transparent;color:#fff;border-color:#5C5C5C}
+.btn.ghost:hover{border-color:var(--orange);color:var(--orange)}
+.btn.danger{color:var(--red);border-color:#E7BDBD}
+.btn.danger:hover{background:#FFEBEE;border-color:var(--red)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.72rem;font-weight:700}
+.badge.on{background:#E8F5E9;color:var(--green)}
+.badge.off{background:#FFEBEE;color:var(--red)}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:2px;padding:0 2vw;background:var(--smoke)}
+.tab{font-family:inherit;font-size:.82rem;font-weight:500;background:transparent;color:#C9C8C6;border:none;border-bottom:3px solid transparent;padding:10px 18px;cursor:pointer}
+.tab:hover{color:#fff}
+.tab.active{color:#fff;border-bottom-color:var(--orange)}
+/* Board tabs: one per board, above everything, so the page tabs below clearly
+   belong to the board that is open. The active tab joins the header colour. */
+.boardtabs{display:flex;align-items:flex-end;gap:4px;padding:8px 2vw 0;background:#262626;overflow-x:auto;scrollbar-width:thin}
+.btab{font-family:inherit;font-size:.8rem;font-weight:600;color:#C9C8C6;background:transparent;border:1px solid #4B4B4B;border-bottom:none;border-radius:8px 8px 0 0;padding:9px 14px;cursor:pointer;white-space:nowrap;max-width:240px;overflow:hidden;text-overflow:ellipsis;min-height:38px;flex:0 0 auto}
+.btab:hover{color:#fff;border-color:#6B6B6B}
+.btab[aria-current="page"]{background:var(--smoke);color:#fff;border-color:var(--smoke);box-shadow:inset 0 3px 0 var(--orange)}
+.btab.add{border-style:dashed;color:#FFB366;font-weight:500}
+.btab.add:hover{color:#fff}
+.btab:focus-visible{outline:2px solid var(--orange);outline-offset:-2px}
+.page{display:none;padding:16px 2vw 0}
+.page.active{display:block}
+
+/* ---------- banner ---------- */
+.banner{border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;font-size:.85rem;line-height:1.5;display:none}
+.banner.warn{display:block;background:#FFF4E5;border:1px solid #FFCC80;color:#8A4B00}
+.banner.err{display:block;background:#FFEBEE;border:1px solid #EF9A9A;color:#8E1F1F}
+.banner.info{display:block;background:#E8F1FB;border:1px solid #A9C7EA;color:#12467E}
+.banner b{display:block;margin-bottom:4px}
+.banner .row{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.stat .v{font-size:1.35rem;font-weight:700}
+.stat .l{font-size:.7rem;color:var(--text-2);margin-top:2px}
+
+/* ---------- filters ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.filters input[type=search],.filters select{font-family:inherit;font-size:.8rem;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text)}
+.filters input[type=search]{min-width:230px}
+.filters .chk{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 11px;cursor:pointer}
+.filters .chk input{accent-color:var(--orange);cursor:pointer}
+.filters .spacer{flex:1}
+.count{font-size:.76rem;color:var(--text-2)}
+
+/* ---------- board ---------- */
+.board{display:grid;grid-template-columns:repeat(var(--cols,5),minmax(215px,1fr));gap:12px;align-items:start;overflow-x:auto;padding-bottom:12px}
+.column{background:var(--col);border-radius:var(--radius);padding:10px;min-height:120px}
+.column.drop{outline:2px dashed var(--orange);outline-offset:-3px;background:#FBEFE2}
+.col-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;padding:0 3px}
+.col-head .t{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gray)}
+.col-head .n{font-size:.72rem;font-weight:700;color:var(--text-2);background:var(--surface);border-radius:99px;padding:1px 9px}
+.col-head .dot{width:8px;height:8px;border-radius:99px;display:inline-block;margin-right:6px;vertical-align:0}
+
+.card{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--text-3);border-radius:var(--radius-sm);padding:10px 11px;margin-bottom:8px;cursor:grab;transition:border-color .12s,box-shadow .12s}
+.card:hover{border-color:var(--orange);border-left-color:var(--orange);box-shadow:0 1px 4px rgba(28,28,30,.10)}
+.card:active{cursor:grabbing}
+.card.dragging{opacity:.35;cursor:grabbing}
+.card *{pointer-events:none}
+.card select{pointer-events:auto}
+.card:focus{outline:2px solid var(--orange);outline-offset:1px}
+.card .key{font-size:.66rem;font-weight:700;color:var(--text-2);background:var(--bg);border-radius:4px;padding:1px 6px;letter-spacing:.02em}
+.card-status{font-family:inherit;font-size:.72rem;width:100%;margin-top:9px;padding:5px 7px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text-2);cursor:pointer}
+.card-status:hover{border-color:var(--orange);color:var(--text)}
+.card-status:focus{outline:none;border-color:var(--orange)}
+.card.sec0{border-left-color:var(--orange)}
+.card.sec1{border-left-color:var(--blue)}
+.card.sec2{border-left-color:var(--green)}
+.card.milestone{background:#FFF8F0}
+.card .title{font-size:.84rem;font-weight:500;line-height:1.35;margin-bottom:8px}
+.card.done .title{color:var(--text-2);text-decoration:line-through}
+.card .row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.card .id{font-size:.66rem;color:var(--text-3);font-weight:500}
+.card .due{font-size:.68rem;color:var(--text-2)}
+.card .due.late{color:var(--red);font-weight:700}
+.card .ac{font-size:.66rem;color:var(--text-2);background:var(--bg);border-radius:5px;padding:1px 6px}
+.card .dia{color:var(--orange-dark);font-weight:700}
+.empty-col{font-size:.74rem;color:var(--text-3);text-align:center;padding:16px 4px}
+/* Done-column overflow toggle. A VIEW control only: it hides cards, it never
+   touches the ledger. Burndown, velocity, pace and epic progress keep reading
+   every done ticket whether or not it is on screen. */
+.col-more{width:100%;margin-top:2px;font-family:inherit;font-size:.72rem;color:var(--text-2);
+  background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:9px 6px;cursor:pointer}
+.col-more:hover{color:var(--text-1);border-color:var(--gray)}
+
+/* ---------- modal ---------- */
+.scrim{position:fixed;inset:0;background:rgba(28,28,30,.45);display:none;z-index:50}
+.scrim.open{display:block}
+.modal{position:fixed;top:0;right:0;bottom:0;width:min(680px,96vw);background:var(--surface);z-index:51;display:none;flex-direction:column;box-shadow:-1px 0 0 var(--border)}
+.modal.open{display:flex}
+.modal header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal header .idline{font-size:.7rem;color:var(--text-3);margin-bottom:5px;font-weight:500}
+.modal .body{flex:1;overflow-y:auto;padding:18px 20px}
+.modal footer{display:flex;gap:8px;align-items:center;padding:14px 20px;border-top:1px solid var(--border);background:var(--bg)}
+.modal footer .spacer{flex:1}
+.x{background:none;border:none;font-size:1.4rem;line-height:1;color:var(--text-2);cursor:pointer;padding:0 4px}
+.x:hover{color:var(--red)}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-2);margin-bottom:5px}
+.field input,.field select,.field textarea{font-family:inherit;font-size:.86rem;width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);line-height:1.5}
+.field textarea{resize:vertical;min-height:110px}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--orange)}
+.field .hint{font-size:.7rem;color:var(--text-3);margin-top:4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+/* The title is a form field like any other, just larger. It used to live outside
+   .field and so picked up none of the shared input styling. */
+.titlefield{margin-bottom:0}
+.titlefield label{margin-bottom:4px}
+#mTitle{font-size:1.02rem;font-weight:700;letter-spacing:-.01em}
+#mTitle::placeholder{font-weight:500;color:var(--text-3)}
+.titlefield .hint{min-height:14px;margin-top:4px}
+#mTitleCount.near{color:var(--orange);font-weight:700}
+.ac-list{list-style:none}
+.ac-item{display:flex;align-items:flex-start;gap:9px;padding:8px 2px;border-bottom:1px solid var(--border)}
+.ac-item:last-child{border-bottom:none}
+.ac-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--green);margin-top:9px;flex-shrink:0;cursor:pointer}
+.ac-item textarea{flex:1;min-height:0;font-size:.82rem;padding:7px 9px;resize:vertical}
+.ac-item.checked textarea{color:var(--text-2);text-decoration:line-through}
+.ac-item .x{font-size:1rem;margin-top:6px}
+.ac-add{display:flex;gap:8px;margin-top:10px}
+.ac-add input{flex:1;font-family:inherit;font-size:.82rem;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm)}
+.readonly{font-size:.8rem;color:var(--text-2);line-height:1.55;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;white-space:pre-wrap}
+
+/* ---------- activity log ---------- */
+.log{list-style:none}
+.log li{padding:9px 0;border-bottom:1px solid var(--border);font-size:.8rem;line-height:1.5}
+.log li:last-child{border-bottom:none}
+.log .when{font-size:.68rem;color:var(--text-3);font-weight:500}
+.log .move{font-weight:500;color:var(--text)}
+.log .move .to{color:var(--orange-dark)}
+.log li.fail .move .to{color:var(--red)}
+.log .why{color:var(--text-2);margin-top:3px;white-space:pre-wrap}
+.log .empty{color:var(--text-3);font-style:italic}
+.card .fails{font-size:.66rem;font-weight:700;color:var(--red);background:#FFEBEE;border-radius:4px;padding:1px 6px}
+
+/* ---------- reason dialog ---------- */
+.ask{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(28,28,30,.5);padding:4vw}
+.ask.open{display:flex}
+.ask .box{background:var(--surface);border-radius:var(--radius);width:min(520px,100%);padding:20px 22px}
+.ask h3{font-size:1rem;margin-bottom:6px}
+.ask .sub{font-size:.8rem;color:var(--text-2);line-height:1.5;margin-bottom:14px}
+.ask textarea{font-family:inherit;font-size:.86rem;width:100%;min-height:110px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);resize:vertical;line-height:1.5}
+.ask textarea:focus{outline:none;border-color:var(--orange)}
+.ask .err{font-size:.75rem;color:var(--red);margin-top:6px;display:none}
+.ask .err.show{display:block}
+.ask .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--smoke);color:#fff;font-size:.82rem;padding:11px 18px;border-radius:var(--radius-sm);z-index:60;opacity:0;pointer-events:none;transition:opacity .18s}
+.toast.show{opacity:1}
+.toast.bad{background:var(--red)}
+.toast.good{background:var(--green)}
+
+/* ---------- charts / lists ---------- */
+.grid{display:grid;gap:16px}
+.charts{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.card-box h2{font-size:.9rem;margin-bottom:10px;color:var(--gray)}
+.card-box.wide{grid-column:1/-1}
+.chart-box{position:relative;height:32vh;min-height:220px}
+.chart-box.tall{height:62vh;min-height:420px}
+
+/* ---------- timeline ----------
+   Rows are a fixed readable height and the panel scrolls. The old canvas
+   divided a fixed box by the row count, so 76 rows rendered 8px tall under a
+   9px font and the labels could not draw at all. Height per row is now a
+   constant and the container grows, which is the whole readability fix. */
+.gantt-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.gantt-head h2{margin:0}
+.gantt-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.gantt-key{display:inline-flex;align-items:center;gap:5px;font-size:.7rem;color:var(--text-2)}
+.gantt-key .sw{width:14px;height:9px;border-radius:3px;display:inline-block}
+.gantt-key .sw.run{background:var(--orange)}
+.gantt-key .sw.late{background:var(--red)}
+.gantt-key .sw.doneb{background:var(--green)}
+.gantt-key .sw.slip{background:repeating-linear-gradient(45deg,var(--red),var(--red) 2px,transparent 2px,transparent 4px);border:1px solid var(--red)}
+
+.gantt{--labw:230px;position:relative;max-height:66vh;overflow-y:auto;overflow-x:hidden;
+  border:1px solid var(--border);border-radius:var(--radius-sm)}
+.g-scale{display:grid;grid-template-columns:var(--labw) 1fr;position:sticky;top:0;z-index:3;
+  background:var(--surface);border-bottom:1px solid var(--border)}
+.g-scale .sp{border-right:1px solid var(--border)}
+.g-ticks{position:relative;height:26px}
+.g-tick{position:absolute;top:0;bottom:0;font-size:.66rem;color:var(--text-3);padding-left:4px;
+  border-left:1px solid var(--border);white-space:nowrap;line-height:26px}
+.g-sec{position:sticky;top:26px;z-index:2;background:var(--col);padding:5px 10px;
+  font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gray);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.g-row{display:grid;grid-template-columns:var(--labw) 1fr;align-items:center;height:30px;
+  border-bottom:1px solid var(--col);cursor:pointer}
+.g-row:hover{background:var(--bg)}
+.g-lab{display:flex;align-items:center;gap:6px;padding:0 8px;overflow:hidden;white-space:nowrap;
+  border-right:1px solid var(--border);font-size:.75rem}
+.g-lab .k{font-size:.64rem;font-weight:700;color:var(--text-3);flex:none}
+.g-lab .n{overflow:hidden;text-overflow:ellipsis}
+.g-lab .ep{font-size:.62rem;color:var(--text-3);flex:none}
+.g-track{position:relative;height:100%}
+.g-bar{position:absolute;top:8px;height:14px;border-radius:4px;min-width:3px}
+.g-bar.run{background:var(--orange)}
+.g-bar.late{background:var(--red)}
+.g-bar.doneb{background:var(--green)}
+.g-bar.notstarted{background:var(--text-3)}
+/* Slip is drawn as a separate hatched run from the due date to today, so an
+   overdue bar shows HOW late it is rather than just that it is late. */
+.g-slip{position:absolute;top:8px;height:14px;border-radius:0 4px 4px 0;
+  background:repeating-linear-gradient(45deg,rgba(198,40,40,.55),rgba(198,40,40,.55) 3px,transparent 3px,transparent 6px);
+  border:1px solid var(--red);border-left:none;box-sizing:border-box}
+.g-slip .d{position:absolute;left:100%;top:-3px;margin-left:5px;font-size:.64rem;font-weight:700;color:var(--red);white-space:nowrap}
+.g-today{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed var(--gray);z-index:1;pointer-events:none}
+.g-ms{position:absolute;top:0;bottom:0;width:0;border-left:2px solid var(--orange-dark);z-index:1;pointer-events:none}
+.g-ms .lbl{position:absolute;top:2px;left:4px;font-size:.62rem;font-weight:700;color:var(--orange-dark);white-space:nowrap}
+.g-ms.hit{border-color:var(--green)}
+.g-ms.hit .lbl{color:var(--green)}
+.g-empty{padding:22px;text-align:center;font-size:.78rem;color:var(--text-3)}
+@media(max-width:820px){ .gantt{--labw:132px} .g-lab{font-size:.68rem} }
+ul.plain{list-style:none}
+ul.plain li{display:flex;gap:10px;align-items:flex-start;padding:9px 6px;border-bottom:1px solid var(--border);font-size:.84rem;color:var(--text-2);line-height:1.5}
+ul.plain li:last-child{border-bottom:none}
+ul.plain li .name{flex:1}
+.mini{font-size:.7rem;padding:2px 8px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--text-2)}
+.mini:hover{color:var(--red)}
+.add-row{display:flex;gap:8px;margin-top:12px}
+.add-row input{flex:1;font-family:inherit;font-size:.8rem;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm)}
+.note{font-size:.72rem;color:var(--text-3);margin-top:10px;font-style:italic;line-height:1.5}
+@media(max-width:900px){
+  .board{grid-template-columns:repeat(var(--cols,5),minmax(200px,1fr))}
+  .two,.three{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="boardtabs" id="boardTabs" aria-label="Boards"></nav>
+<div class="topbar">
+  <div>
+    <h1 id="boardTitle">Sojuli Digital</h1>
+    <div class="meta" id="metaLine">Loading ledger…</div>
+  </div>
+  <div class="actions">
+    <span class="badge" id="paceBadge"></span>
+    <button class="btn primary" onclick="newTask()">+ New ticket</button>
+    <button class="btn ghost" onclick="reloadFromLedger()">Reload</button>
+    <button class="btn ghost" onclick="exportJSON()">Export</button>
+    <span class="savepill" id="savePill" role="status" aria-live="polite" title="Persistence state of this board">…</span>
+    <button class="btn primary" id="saveBtn" onclick="saveToLedger()" hidden>Save now</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-page="board" onclick="showPage('board')">Board</button>
+  <button class="tab" data-page="charts" onclick="showPage('charts')">Charts</button>
+  <button class="tab" data-page="backlog" onclick="showPage('backlog')">Backlog &amp; Rules</button>
+  <button class="tab" data-page="settings" onclick="showPage('settings')">Settings</button>
+</div>
+
+<div class="page active" id="page-board">
+  <div class="banner" id="banner"></div>
+  <div class="stats" id="statRow"></div>
+  <div class="filters">
+    <input type="search" id="q" placeholder="Search title, id, description…" oninput="renderBoard()">
+    <select id="fSec" onchange="renderBoard()"><option value="">All sections</option></select>
+    <select id="fEpic" onchange="renderBoard()"><option value="">All epics</option></select>
+    <label class="chk"><input type="checkbox" id="fOver" onchange="renderBoard()"> Overdue only</label>
+    <label class="chk"><input type="checkbox" id="fMile" onchange="renderBoard()"> Milestones only</label>
+    <div class="spacer"></div>
+    <span class="count" id="boardCount"></span>
+  </div>
+  <div class="board" id="board"></div>
+</div>
+
+<div class="page" id="page-charts">
+  <div class="grid charts">
+    <div class="card-box wide">
+      <div class="gantt-head">
+        <h2>Timeline — what is running, and what is late</h2>
+        <div class="gantt-tools">
+          <span class="gantt-key"><i class="sw run"></i>on track</span>
+          <span class="gantt-key"><i class="sw late"></i>past due</span>
+          <span class="gantt-key"><i class="sw slip"></i>slip to today</span>
+          <span class="gantt-key"><i class="sw doneb"></i>done</span>
+          <button class="btn" id="ganttToggle" onclick="toggleGanttDone()">Show completed</button>
+        </div>
+      </div>
+      <div id="gantt" class="gantt"></div>
+    </div>
+    <div class="card-box"><h2>Burndown — tasks remaining</h2><div class="chart-box"><canvas id="burndown"></canvas></div></div>
+    <div class="card-box">
+      <div class="gantt-head"><h2>Velocity — verified done per week (Sun–Sat)</h2>
+        <button class="btn" id="weeksToggle" onclick="toggleWeeks()">Whole project</button></div>
+      <div class="chart-box"><canvas id="velocity"></canvas></div>
+    </div>
+    <div class="card-box"><h2>Pace — required vs actual (tasks/week)</h2><div class="chart-box"><canvas id="pace"></canvas></div></div>
+    <div class="card-box"><h2>Weekly workload — tasks due</h2><div class="chart-box"><canvas id="workload"></canvas></div></div>
+  </div>
+</div>
+
+<div class="page" id="page-backlog">
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr))">
+    <div class="card-box">
+      <h2>Backlog — parked, not scheduled</h2>
+      <ul class="plain" id="backlogList"></ul>
+      <div class="add-row">
+        <input id="bName" placeholder="New backlog item">
+        <button class="btn" onclick="addBacklog()">Add</button>
+      </div>
+      <div class="note">Anything outside this board's goal belongs here, never in the plan.</div>
+    </div>
+    <div class="card-box">
+      <h2>Standing Rules</h2>
+      <ul class="plain" id="rulesList"></ul>
+      <div class="note">With the server running, each board is one file in the boards folder. This page reads it fresh on load and writes back through the local server. Every save takes a timestamped backup first.</div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-settings">
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(360px,1fr))">
+    <div class="card-box">
+      <h2>Board</h2>
+      <div class="field"><label for="sName">Board name</label>
+        <input id="sName" maxlength="60" placeholder="My Project"></div>
+      <div class="field"><label for="sGoal">Goal — one sentence describing done</label>
+        <input id="sGoal" maxlength="200"></div>
+      <div class="two">
+        <div class="field"><label for="sStart">Start</label><input id="sStart" type="date"></div>
+        <div class="field"><label for="sTarget">Target</label><input id="sTarget" type="date"></div>
+      </div>
+      <div class="field"><label for="sPrefix">Ticket prefix</label>
+        <input id="sPrefix" maxlength="6" placeholder="PRJ">
+        <div class="hint">Names new tickets. BM gives you BM-101. Existing keys never change.</div></div>
+      <div class="field"><label for="sSections">Sections, one per line</label>
+        <textarea id="sSections" rows="3"></textarea></div>
+      <div class="field"><label for="sRules">Rules, one per line</label>
+        <textarea id="sRules" rows="4"></textarea></div>
+      <div class="add-row">
+        <button class="btn primary" onclick="saveBoardIdentity()">Save board details</button>
+        <button class="btn danger" onclick="clearBoard()">Clear this board</button>
+        <button class="btn danger" onclick="deleteCurrentBoard()">Delete this board</button>
+      </div>
+      <div class="note">Clearing deletes every ticket and backlog item on this board and cannot
+        be undone. Deleting removes the whole board and its tab. With the server running, a
+        deleted board's file moves to boards/deleted/ and can be recovered. Export first if you
+        want to keep a copy.</div>
+    </div>
+    <div class="card-box">
+      <h2>Board columns</h2>
+      <div id="colEditor"></div>
+      <div class="add-row">
+        <input id="newCol" placeholder="New column name" maxlength="30"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();addColumn()}">
+        <button class="btn" onclick="addColumn()">Add column</button>
+      </div>
+      <div class="note">Rename and reorder freely. The stored key behind each column never changes,
+        so a rename cannot orphan a ticket or break its history. Removing a column makes you move
+        its tickets first, and the ledger refuses the save if any are left behind.</div>
+    </div>
+    <div class="card-box">
+      <h2>Column roles</h2>
+      <div class="field">
+        <label for="setDefault">New tickets start in</label>
+        <select id="setDefault" onchange="setRole('defaultKey',this.value)"></select>
+      </div>
+      <div class="field">
+        <label for="setIntake">Backlog items land in</label>
+        <select id="setIntake" onchange="setRole('intakeKey',this.value)"></select>
+        <div class="hint">Where a backlog item goes when you send it to the board.</div>
+      </div>
+      <div class="field">
+        <label for="setDone">Done column</label>
+        <select id="setDone" onchange="setRole('doneKey',this.value)"></select>
+        <div class="hint">Moving a ticket here stamps the done date and ticks every criterion.
+          Pace, burndown and velocity all count this column.</div>
+      </div>
+      <div class="field">
+        <label for="setDoneCap">Done column shows the newest</label>
+        <input id="setDoneCap" type="number" min="0" max="200" step="1"
+               onchange="setDoneCap(this.value)">
+        <div class="hint">A display limit only. Older done tickets collapse behind a
+          "Show all" button on the column; nothing is deleted, archived, or removed from
+          the ledger. Burndown, velocity, pace and epic progress keep counting every
+          done ticket. Set 0 to show them all.</div>
+      </div>
+      <div class="field">
+        <label>Failed verification route</label>
+        <div class="two">
+          <select id="setFailFrom" onchange="setRole('failFrom',this.value)"></select>
+          <select id="setFailTo" onchange="setRole('failTo',this.value)"></select>
+        </div>
+        <div class="hint">The Failed action is offered only while a ticket sits in the first column,
+          and sends it to the second with a required reason. Set either to Off to remove the action.</div>
+      </div>
+      <div class="note">Settings save with your board data, so they travel with it when you
+        export or load tasks.json.</div>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" onclick="closeAnyPanel()"></div>
+
+<div class="modal" id="blModal">
+  <header>
+    <div style="flex:1;min-width:0">
+      <div class="idline" id="blId"></div>
+      <div class="field titlefield">
+        <label for="blText">Backlog item</label>
+        <input id="blText" placeholder="What is the idea?" autocomplete="off" spellcheck="true">
+        <div class="hint">This becomes the ticket title when you send it to the board.</div>
+      </div>
+    </div>
+    <button class="x" onclick="closeBacklogItem()">&times;</button>
+  </header>
+  <div class="body">
+    <div class="field">
+      <label for="blNote">Notes</label>
+      <textarea id="blNote" placeholder="Why it matters, what you already know, where the code is"></textarea>
+      <div class="hint">Carried into the ticket description when this is promoted, so nothing has to be retyped.</div>
+    </div>
+    <div class="field">
+      <label>Not scheduled</label>
+      <div class="readonly">A backlog item has no section, dates or status. It gets them when you send it to the board, and only then does it count toward pace.</div>
+    </div>
+  </div>
+  <footer>
+    <button class="btn danger" onclick="deleteBacklogItem()">Delete</button>
+    <div class="spacer"></div>
+    <button class="btn" onclick="promoteFromPanel()">Send to board</button>
+    <button class="btn" onclick="closeBacklogItem()">Cancel</button>
+    <button class="btn primary" onclick="applyBacklogItem()">Save item</button>
+  </footer>
+</div>
+<div class="modal" id="modal">
+  <header>
+    <div style="flex:1;min-width:0">
+      <div class="idline" id="mId"></div>
+      <div class="field titlefield">
+        <label for="mTitle">Title</label>
+        <input id="mTitle" placeholder="Short, scannable title" maxlength="70"
+               oninput="titleCount()" autocomplete="off" spellcheck="true">
+        <div class="hint"><span id="mTitleCount"></span></div>
+      </div>
+    </div>
+    <button class="x" onclick="closeModal()">&times;</button>
+  </header>
+  <div class="body">
+    <div class="confirm" id="demoteBox"></div>
+    <div class="three">
+      <div class="field"><label>Status</label><select id="mStatus"></select></div>
+      <div class="field"><label>Start</label><input id="mStart" type="date"></div>
+      <div class="field"><label>Due</label><input id="mDue" type="date"></div>
+    </div>
+    <div class="three">
+      <div class="field"><label>Section</label><select id="mSection"></select></div>
+      <div class="field"><label>Done date</label><input id="mDone" type="date"><div class="hint">Verified, not coded</div></div>
+      <div class="field"><label>Code complete</label><input id="mCode" type="date"></div>
+    </div>
+    <div class="field">
+      <label>Ticket type</label>
+      <label class="chk" style="display:inline-flex;align-items:center;gap:7px;font-size:.82rem;color:var(--text-2)">
+        <input type="checkbox" id="mMile" onchange="onTypeToggle('mile')"> This is a milestone, not work
+      </label>
+      <label class="chk" style="display:inline-flex;align-items:center;gap:7px;font-size:.82rem;color:var(--text-2);margin-top:6px">
+        <input type="checkbox" id="mEpic" onchange="onTypeToggle('epic')"> This is an epic, a container for other tickets
+      </label>
+    </div>
+    <div class="field" id="mEpicPick">
+      <label>Epic</label>
+      <select id="mEpicKey"></select>
+      <div class="hint">Groups this ticket under a feature. It does not change the section or the release date.</div>
+    </div>
+    <div class="field" id="mEpicRoll" style="display:none">
+      <label>Tickets in this epic</label>
+      <div class="readonly" id="mEpicChildren"></div>
+      <div class="hint">Epics are containers, so they are left out of the pace maths exactly like milestones.</div>
+    </div>
+    <div class="field">
+      <label>Acceptance criteria</label>
+      <ul class="ac-list" id="mAc"></ul>
+      <div class="ac-add">
+        <input id="acNew" placeholder="Add a criterion, then Enter" onkeydown="if(event.key==='Enter'){event.preventDefault();addCriterion()}">
+        <button class="btn" onclick="addCriterion()">Add</button>
+      </div>
+      <div class="hint">Done means every box here is checked and verified against real data.</div>
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <textarea id="mDesc" placeholder="Background, root cause, decisions, scope"></textarea>
+    </div>
+    <div class="field">
+      <label>Verify note (original)</label>
+      <div class="readonly" id="mVerify"></div>
+      <div class="hint">Kept from the ledger for reference. Edit the criteria above instead.</div>
+    </div>
+    <div class="field">
+      <label>Activity</label>
+      <ul class="log" id="mLog"></ul>
+      <div class="ac-add">
+        <input id="logNew" placeholder="Add a note without changing status" onkeydown="if(event.key==='Enter'){event.preventDefault();addNote()}">
+        <button class="btn" onclick="addNote()">Add note</button>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <button class="btn danger" onclick="deleteTask()">Delete</button>
+    <button class="btn" onclick="startDemote()">Send to backlog</button>
+    <div class="spacer"></div>
+    <button class="btn" onclick="closeModal()">Cancel</button>
+    <button class="btn primary" onclick="applyModal()">Save task</button>
+  </footer>
+</div>
+
+<div class="ask" id="ask">
+  <div class="box">
+    <h3 id="askTitle"></h3>
+    <div class="sub" id="askSub"></div>
+    <textarea id="askText" placeholder="What failed? Be specific enough that you can pick it up cold tomorrow."></textarea>
+    <div class="err" id="askErr">A reason is required when a ticket moves backward.</div>
+    <div class="row">
+      <button class="btn" onclick="askCancel()">Cancel</button>
+      <button class="btn primary" id="askOk" onclick="askConfirm()">Send back</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.card.epic{border-left:3px solid #6A3D9A;background:#F7F3FB}
+.card.epic .dia{color:#6A3D9A}
+.epictag{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:999px;background:#EDE3F6;
+  color:#4A2B6B;font-size:.68rem;font-weight:700;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.savepill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;
+  font-size:.74rem;font-weight:700;letter-spacing:.02em;white-space:nowrap;border:1px solid transparent}
+.savepill.ok{background:#E8F5E9;color:#1B5E20;border-color:#A5D6A7}
+.savepill.work{background:#FFF3E0;color:#E65100;border-color:#FFCC80}
+.savepill.bad{background:#FFEBEE;color:#B71C1C;border-color:#EF9A9A}
+.savepill.ro{background:#B71C1C;color:#fff;border-color:#B71C1C}
+.colrow{display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.colrow:last-of-type{border-bottom:none}
+.colrow .ord{display:flex;gap:3px}
+.colrow .ord .mini{min-width:44px;min-height:44px;line-height:1.3;font-size:.9rem}
+.colrow input[type=color]{width:44px;min-height:44px;padding:2px;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;flex-shrink:0}
+.colrow .collabel,.colrow select,.colrow .btn{min-height:44px}
+.colrow .collabel{flex:1;min-width:130px;font-family:inherit;font-size:.84rem;padding:7px 9px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text)}
+.colrow .collabel:focus{outline:none;border-color:var(--orange)}
+.colrow .tag{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:99px;background:var(--bg);color:var(--text-2);border:1px solid var(--border)}
+.colrow .tag.done{background:#E8F5E9;color:#1B5E20;border-color:#A5D6A7}
+.colrow.warn{background:#FFF4E5;border:1px solid #FFCC80;border-radius:var(--radius-sm);padding:11px 12px;margin:6px 0}
+.colrow .msg{flex:1 1 100%;font-size:.82rem;line-height:1.5;color:#8A4B00}
+.colrow select{font-family:inherit;font-size:.8rem;padding:7px 9px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text)}
+ul.plain li.promote{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#FFF4E5;border:1px solid #FFCC80;border-radius:var(--radius-sm);padding:12px}
+ul.plain li.promote .msg{flex:1 1 100%;font-size:.84rem;line-height:1.5;color:#8A4B00}
+ul.plain li.promote .sub{flex:1 1 100%;font-size:.72rem;color:#8A4B00;opacity:.85;line-height:1.45}
+ul.plain li.promote select,ul.plain li.promote input[type=date]{font-family:inherit;font-size:.8rem;min-height:44px;padding:7px 9px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text)}
+ul.plain li.promote .btn{min-height:44px}
+ul.plain li .mini{min-height:44px;min-width:44px}
+ul.plain li.bl{cursor:grab;align-items:center;background:var(--surface);padding-left:10px;padding-right:10px;
+  transition:background .12s,box-shadow .12s}
+ul.plain li.bl.alt{background:var(--bg)}
+/* Hover and keyboard focus are the same state. Focus-within keeps the row lit
+   while you tab through its buttons, so the keyboard path is not second class. */
+/* Darker than the stripe on purpose. --col (#EFEEEC) sat one shade off --bg
+   (#F5F5F4), so hovering a banded row read as no change at all. Neutral rather
+   than orange, because orange fill means drop target on this list. */
+ul.plain li.bl:hover,ul.plain li.bl:focus-within{background:#E4E2DF;box-shadow:inset 3px 0 0 var(--orange)}
+ul.plain li.bl:active{cursor:grabbing}
+ul.plain li.bl.dragging{opacity:.35}
+/* Drop target stays orange and dashed so it never reads as plain hover. */
+ul.plain li.bl.over,ul.plain li.bl.over:hover{outline:2px dashed var(--orange);outline-offset:-2px;background:#FBEFE2;box-shadow:none}
+/* The chip used to be filled with --bg, which is exactly the stripe colour, so
+   it vanished on every other row. Bordered instead, legible on both. */
+ul.plain li.bl .key{font-size:.66rem;font-weight:700;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:2px 7px;letter-spacing:.02em;flex-shrink:0;align-self:flex-start;margin-top:2px}
+ul.plain li.bl .blnote{display:block;font-size:.72rem;color:var(--text-3);line-height:1.45;margin-top:3px}
+ul.plain li.bl .blopen{cursor:pointer;border-radius:6px;padding:6px 8px;margin:-6px -8px;color:var(--text)}
+ul.plain li.bl .blopen:hover{color:var(--orange-dark)}
+.confirm{display:none}
+.confirm.warn,.confirm.bad{display:block;border-radius:var(--radius-sm);padding:13px 15px;margin-bottom:16px;font-size:.83rem;line-height:1.55}
+.confirm.warn{background:#FFF4E5;border:1px solid #FFCC80;color:#8A4B00}
+.confirm.bad{background:#FFEBEE;border:1px solid #EF9A9A;color:#8E1F1F}
+.confirm b{display:block;margin-bottom:4px}
+.confirm .row{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}
+.confirm .btn{min-height:44px}
+ul.plain li.bl .blopen:focus-visible{outline:2px solid var(--orange);outline-offset:1px}
+#blModal .body .readonly{font-style:normal}
+body.readonly .card{cursor:not-allowed}
+body.readonly .card:active{transform:none}
+body.readonly .topbar h1 span::after{content:' — READ ONLY';color:#B71C1C;font-size:.6em;letter-spacing:.08em}
+</style>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="filePick" accept=".json,application/json" style="display:none" onchange="pickFile(event)">
+
+<script>
+/* Multiple boards, added 2026-10-13. Each board is its own file on the server
+   (boards/<id>.json) and its own slot in this browser. The three names below
+   are set by setBoard() once the board to open is known, so every load, save
+   and cache call keeps working on exactly one board at a time. */
+let LEDGER_URL = null, SAVE_URL = null, LS_KEY = null;
+let BOARD_ID = null, BOARDS = [];
+const BOARDS_URL = 'api/boards';
+const LS_PREFIX = 'project_board_v1:';      // + board id
+const LS_LEGACY = 'project_board_v1';       // the single-board cache from before tabs
+const LS_INDEX  = 'project_board_index';    // [{id, name}] in tab order
+const LS_LAST   = 'project_board_last';     // the board open last time
+const DAY = 86400000;
+
+// One status per swimlane, 1:1, no exceptions. The ticket dropdown and the
+// board columns are generated from this same list so they cannot disagree.
+const LEGACY_SETTINGS = {
+  columns: [
+    { key:'needs-reconciliation', label:'Needs Decision',  dot:'#C62828' },
+    { key:'not-started',          label:'Not Started',     dot:'#9A9A98' },
+    { key:'in-progress',          label:'In Progress',     dot:'#FF8200' },
+    { key:'ready-for-testing',    label:'Ready to Verify', dot:'#1565C0' },
+    { key:'done',                 label:'Done',            dot:'#2E7D32' }
+  ],
+  doneKey:'done', defaultKey:'not-started', intakeKey:'needs-reconciliation',
+  failFrom:'ready-for-testing', failTo:'in-progress', doneCap:15
+};
+const MAX_COLUMNS = 12;
+
+/* How many done tickets the board draws before it collapses the rest behind a
+   toggle. This is a RENDER limit and nothing else. Nothing is deleted, nothing
+   is archived, nothing is written. Every chart, the pace maths and epic
+   progress all read state.tasks in full, so a capped column and an uncapped
+   burndown cannot disagree. 0 means show them all. */
+const DONE_CAP_MAX = 200;
+let DONE_CAP = 15;
+let showAllDone = false;   // session-only, deliberately not persisted
+
+/* These are rebuilt from state.settings on every load and on every Settings
+   edit. A column KEY is permanent — it is what tasks, history and every backup
+   already point at — so the Settings page edits labels, colours, order and
+   membership, never keys. Rename all you like; nothing is orphaned. */
+let COLUMNS = LEGACY_SETTINGS.columns.map(c => Object.assign({}, c));
+let DEFAULT_STATUS = 'not-started';
+let DONE_KEY = 'done';
+let INTAKE_KEY = 'needs-reconciliation';
+
+/* "Failed" is an ACTION, not a column and not a stored status. It is offered
+   only while a ticket sits in Ready to Verify, and it resolves to In Progress
+   with the failure recorded. Nothing named 'failed' is ever written to the
+   ledger — serve-dashboard.js rejects it as an unknown status, on purpose. */
+const FAIL_ACTION = 'failed';
+let FAIL_FROM = 'ready-for-testing';
+let FAIL_TO = 'in-progress';
+
+/* Clearing a done date has to send the ticket somewhere sensible. It used to be
+   hardcoded to Ready to Verify, which stops existing once that column can be
+   renamed away. Fall back to whatever now sits before the done column. */
+function prevOfDone(){
+  const i = COLUMNS.findIndex(c => c.key === DONE_KEY);
+  return i > 0 ? COLUMNS[i-1].key : DEFAULT_STATUS;
+}
+
+/* Reads the settings block, repairs anything impossible, and republishes the
+   board's working copies. Called before every render path, so a hand-edited or
+   pre-settings ledger still lands on a board that works. */
+function applySettings(){
+  if (!state.settings || typeof state.settings !== 'object') state.settings = {};
+  const s = state.settings;
+  if (!Array.isArray(s.columns) || !s.columns.length) {
+    // Adopt the whole legacy block, not just the columns. Taking the columns
+    // alone left doneKey and defaultKey unset, and the repair below would then
+    // pick "the first column" — which silently moved where new tickets start.
+    Object.assign(s, JSON.parse(JSON.stringify(LEGACY_SETTINGS)));
+  }
+  s.columns = s.columns
+    .filter(c => c && c.key)
+    .slice(0, MAX_COLUMNS)
+    .map(c => ({ key: String(c.key),
+                 label: String(c.label || c.key).slice(0, 30),
+                 dot: /^#[0-9a-fA-F]{6}$/.test(String(c.dot || '')) ? c.dot : '#9A9A98' }));
+  const keys = s.columns.map(c => c.key);
+  if (keys.indexOf(s.doneKey) === -1) s.doneKey = keys[keys.length-1];
+  if (keys.indexOf(s.defaultKey) === -1) s.defaultKey = keys[0];
+  /* Backlog items arrive undecided, so they land left of the working columns
+     rather than in the column new tickets start in. First column, unless the
+     board says otherwise. */
+  if (keys.indexOf(s.intakeKey) === -1) s.intakeKey = keys[0];
+  // Half a fail route is no route. Drop both rather than offer a dead action.
+  if (keys.indexOf(s.failFrom) === -1 || keys.indexOf(s.failTo) === -1) { s.failFrom = null; s.failTo = null; }
+  /* Missing means never configured, so take the default. Present but junk gets
+     clamped rather than dropped, because a NaN here would silently render an
+     empty Done column and read as lost data. */
+  if (s.doneCap === undefined || s.doneCap === null) s.doneCap = LEGACY_SETTINGS.doneCap;
+  let cap = parseInt(s.doneCap, 10);
+  if (!isFinite(cap) || cap < 0) cap = LEGACY_SETTINGS.doneCap;
+  s.doneCap = Math.min(cap, DONE_CAP_MAX);
+
+  COLUMNS = s.columns;
+  DONE_CAP = s.doneCap;
+  DONE_KEY = s.doneKey;
+  DEFAULT_STATUS = s.defaultKey;
+  INTAKE_KEY = s.intakeKey;
+  FAIL_FROM = s.failFrom;
+  FAIL_TO = s.failTo;
+  document.documentElement.style.setProperty('--cols', COLUMNS.length);
+}
+
+const isStatus = s => COLUMNS.some(c => c.key === s);
+const colOf = s => isStatus(s) ? s : DEFAULT_STATUS;
+const labelOf = s => s === FAIL_ACTION ? 'Failed' : (COLUMNS.find(c => c.key === colOf(s))).label;
+
+// `current` decides whether the Failed action is offered at all.
+function statusOptions(sel, current){
+  let html = COLUMNS.map(c =>
+    '<option value="' + c.key + '"' + (c.key === sel ? ' selected' : '') + '>' + c.label + '</option>').join('');
+  if (FAIL_FROM && FAIL_TO && colOf(current) === FAIL_FROM) {
+    html += '<option value="' + FAIL_ACTION + '">Failed — send back to ' + esc(labelOf(FAIL_TO)) + '</option>';
+  }
+  return html;
+}
+// Turns a dropdown value into a real column, flagging the failure route.
+function resolveTarget(key){
+  if (key === FAIL_ACTION) {
+    const to = COLUMNS.find(c => c.key === FAIL_TO);
+    return to ? Object.assign({}, to, { viaFail:true }) : null;
+  }
+  return COLUMNS.find(c => c.key === key);
+}
+
+let state = null, ledger = null, source = '', dirty = false, canWrite = false;
+
+/* Standalone mode: no server, this browser is the store. It exists so the file
+   can be opened by double-click and still work, which is how the shareable
+   package ships.
+
+   DELIBERATELY NARROW. Standalone only engages on the file: protocol, where no
+   server can exist and no tasks.json was ever read. If a fetch over http fails,
+   the board stays locked read-only exactly as before — a reachable tasks.json
+   that is momentarily unreadable must never be shadowed by browser-only edits,
+   because that is how you end up editing a stale copy and believing it saved.
+   SEEDS holds the starting boards for a browser that has none yet. */
+let standalone = false;
+let SEEDS = [
+  {
+    "project": "Budget Master",
+    "goal": "",
+    "targetDate": "2026-12-31",
+    "created": "2026-10-17",
+    "updated": "2026-10-17",
+    "schemaVersion": 2,
+    "keyPrefix": "BM",
+    "nextKeyNum": 104,
+    "sections": [
+      "Product",
+      "Operations"
+    ],
+    "rules": [],
+    "backlog": [],
+    "tasks": [
+      {
+        "id": "task-bm101",
+        "key": "BM-101",
+        "title": "Confirm the latest Budget Master code is on GitHub",
+        "section": "Operations",
+        "start": "2026-10-17",
+        "due": "2026-10-24",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-bm102",
+        "key": "BM-102",
+        "title": "Set the scope for the next release",
+        "section": "Product",
+        "start": "2026-10-17",
+        "due": "2026-10-31",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-bm103",
+        "key": "BM-103",
+        "title": "Retire the old project board inside the Budget Master repo",
+        "section": "Operations",
+        "start": "2026-10-17",
+        "due": "2026-11-07",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      }
+    ]
+  },
+  {
+    "project": "LeaderStack",
+    "goal": "",
+    "targetDate": "2026-12-31",
+    "created": "2026-10-17",
+    "updated": "2026-10-17",
+    "schemaVersion": 2,
+    "keyPrefix": "LS",
+    "nextKeyNum": 105,
+    "sections": [
+      "YouTube",
+      "The Switch",
+      "Products"
+    ],
+    "rules": [],
+    "backlog": [],
+    "tasks": [
+      {
+        "id": "task-ls101",
+        "key": "LS-101",
+        "title": "Validate the niche: first-time, new and accidental managers",
+        "section": "YouTube",
+        "start": "2026-10-17",
+        "due": "2026-10-31",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-ls102",
+        "key": "LS-102",
+        "title": "Find outlier videos to model with vidIQ",
+        "section": "YouTube",
+        "start": "2026-10-17",
+        "due": "2026-10-27",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-ls103",
+        "key": "LS-103",
+        "title": "Set the next milestone for The Switch",
+        "section": "The Switch",
+        "start": "2026-10-17",
+        "due": "2026-10-24",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-ls104",
+        "key": "LS-104",
+        "title": "Scope the platform maturity model as a LeaderStack feature",
+        "section": "Products",
+        "start": "2026-10-17",
+        "due": "2026-11-14",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      }
+    ]
+  },
+  {
+    "project": "Fix.ly",
+    "goal": "",
+    "targetDate": "2026-12-31",
+    "created": "2026-10-17",
+    "updated": "2026-10-17",
+    "schemaVersion": 2,
+    "keyPrefix": "FX",
+    "nextKeyNum": 104,
+    "sections": [
+      "Planning",
+      "Build"
+    ],
+    "rules": [],
+    "backlog": [],
+    "tasks": [
+      {
+        "id": "task-fx101",
+        "key": "FX-101",
+        "title": "Pick a restart date once The Switch and Budget Master are done",
+        "section": "Planning",
+        "start": "2026-10-17",
+        "due": "2026-11-16",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-fx102",
+        "key": "FX-102",
+        "title": "Re-read the PRD and ADRs before restarting",
+        "section": "Planning",
+        "start": "2026-10-17",
+        "due": "2026-12-01",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-fx103",
+        "key": "FX-103",
+        "title": "Set up the repo with the REPO_SETUP runbook",
+        "section": "Build",
+        "start": "2026-10-17",
+        "due": "2026-12-16",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      }
+    ]
+  },
+  {
+    "project": "Kin & Letter",
+    "goal": "",
+    "targetDate": "2026-12-31",
+    "created": "2026-10-17",
+    "updated": "2026-10-17",
+    "schemaVersion": 2,
+    "keyPrefix": "KL",
+    "nextKeyNum": 104,
+    "sections": [
+      "Store",
+      "Brand"
+    ],
+    "rules": [],
+    "backlog": [],
+    "tasks": [
+      {
+        "id": "task-kl101",
+        "key": "KL-101",
+        "title": "Check in with the store operators",
+        "section": "Store",
+        "start": "2026-10-17",
+        "due": "2026-10-24",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-kl102",
+        "key": "KL-102",
+        "title": "Confirm the kinandletter.com domain",
+        "section": "Brand",
+        "start": "2026-10-17",
+        "due": "2026-10-31",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      },
+      {
+        "id": "task-kl103",
+        "key": "KL-103",
+        "title": "Review results for the message-card jewelry hero product",
+        "section": "Store",
+        "start": "2026-10-17",
+        "due": "2026-11-07",
+        "done": null,
+        "status": "not-started",
+        "milestone": false,
+        "epic": false,
+        "epicKey": null,
+        "description": "Starter task based on what is known about this business today. Edit or delete it.",
+        "acceptanceCriteria": [],
+        "history": []
+      }
+    ]
+  }
+];
+/* The seed whose board id matches, or null. Ids come from the board name the
+   same way the server makes them, so both modes open the same four boards. */
+function seedFor(id){ return SEEDS.find(sd => slugId(sd.project, []) === id) || null; };
+/* Autosave, added 2026-08-08. Three status changes were lost in one morning
+   because persistence required a deliberate click on a button whose only
+   unsaved signal was a bullet in its label. Mutations now write themselves. */
+let saveTimer = null, saving = false, saveFailed = false, lastSavedAt = null, autosavePending = false;
+/* The revision of tasks.json this board is editing. Sent as If-Match on every
+   save so a stale write is refused by the server instead of silently applied. */
+let ledgerRev = null, conflict = false;
+let charts = {}, openId = null, draftAc = [];
+
+/* ---------- dates ---------- */
+function parseD(s){ const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+function fmtD(dt){ return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0'); }
+function shortD(s){ const d = parseD(s); return (d.getMonth()+1) + '/' + d.getDate(); }
+function today(){ const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+function daysBetween(a,b){ return Math.round((b-a)/DAY); }
+function sundayOf(dt){ const d = new Date(dt); d.setDate(d.getDate() - d.getDay()); return d; }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function clip(s,n){ s = String(s||''); return s.length > n ? s.slice(0,n-1).trimEnd() + '…' : s; }
+
+/* ---------- boot ---------- */
+async function boot(){
+  let fetched = null, err = null;
+  /* file: cannot serve a fetch, so asking is pointless and logs a red console
+     error that makes a working board look broken. Go straight to standalone. */
+  // typeof-guarded: the settings suite runs this script in a bare VM context
+  // with no `location`, and an unguarded read throws before boot can start.
+  const noServerPossible = typeof location !== 'undefined' && location.protocol === 'file:';
+  if (noServerPossible) {
+    canWrite = false;
+  } else {
+    try {
+      const ir = await fetch(BOARDS_URL + '?t=' + Date.now(), { cache:'no-store' });
+      if (!ir.ok) throw new Error('board list HTTP ' + ir.status);
+      BOARDS = cleanBoardList((await ir.json()).boards);
+      if (!BOARDS.length) {
+        // A folder with no tasks.json and no boards yet: make the first one
+        // rather than open on nothing.
+        const made = await createBoardOnServer(makeStarterPlan('My Board'));
+        if (!made) throw new Error('could not create a first board');
+      }
+      setBoard(pickBoard(BOARDS));
+      saveLocalIndex();
+      const res = await fetch(LEDGER_URL + '?t=' + Date.now(), { cache:'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      ledgerRev = res.headers.get('ETag');
+      fetched = await res.json();
+      source = 'boards/' + BOARD_ID + '.json (live)';
+      canWrite = true;
+    } catch(e){ err = e; canWrite = false; }
+  }
+
+  if (fetched) { adoptLedger(fetched); return; }
+
+  if (noServerPossible) {
+    standalone = true; canWrite = true;
+    loadLocalBoards();
+    setBoard(pickBoard(BOARDS));
+    const cachedSA = readCache();
+    if (cachedSA && cachedSA.state) {
+      ledger = cachedSA.ledger || cachedSA.state;
+      state  = cachedSA.state;
+      dirty  = false;
+      source = 'this browser';
+    } else if (seedFor(BOARD_ID)) {
+      ledger = JSON.parse(JSON.stringify(seedFor(BOARD_ID)));
+      state  = JSON.parse(JSON.stringify(seedFor(BOARD_ID)));
+      dirty  = false;
+      source = 'this browser';
+    } else {
+      /* No seed and no cache means this build expects a real ledger on disk.
+         Do not invent an empty board over the top of it. */
+      showBanner('err','Opened as a file, and there is no board stored in this browser.',
+        'This copy keeps its data in <code>tasks.json</code>. Close this window and start the local server: double-click <code>start-dashboard.bat</code>, or run <code>node serve-dashboard.js</code>.', true);
+      updateSaveBtn(); applyReadOnlyUi(); renderBoardTabs();
+      return;
+    }
+    normalise(); writeCache(); renderAll();
+    showBanner('warn','Running standalone — this browser is storing the board.',
+      'Every change saves to this browser automatically and will still be here when you come back. It lives on this machine only, so use <strong>Export</strong> to take a copy with you. '
+      + 'To store the board in <code>tasks.json</code> on disk instead, close this tab and start the local server: <code>node serve-dashboard.js</code>, or double-click <code>start-dashboard.bat</code> on Windows.');
+    updateSaveBtn(); applyReadOnlyUi();
+    return;
+  }
+
+  // Server unreachable. Fall back to the board this browser last had open.
+  if (!BOARD_ID) {
+    BOARDS = readLocalIndex() || [];
+    const id = pickBoard(BOARDS);
+    if (id) setBoard(id);
+    else LS_KEY = LS_LEGACY;     // a browser from before tabs: its one cached board is all there is
+  }
+  const cached = LS_KEY ? readCache() : null;
+  if (cached) {
+    ledger = cached.ledger; state = cached.state; dirty = cached.dirty;
+    /* BUG FIX 2026-08-31: this branch called renderAll() without normalise(),
+       so state.settings was never built and renderSettings threw on s.columns.
+       The read-only path exists to protect a ledger it cannot reach, and it was
+       crashing on render instead. normalise() is an in-memory repair only;
+       canWrite stays false, so nothing here can reach disk. */
+    normalise();
+    source = 'offline copy saved ' + cached.savedAt;
+    showBanner('warn','Could not read tasks.json — showing the copy this browser saved on ' + cached.savedAt + '.',
+      'NOTHING YOU DO ON THIS PAGE CAN BE SAVED. The board is locked read-only so it cannot show you a status that is not in tasks.json. Close this window, double-click start-dashboard.bat in the project folder, and use the page it opens.', true);
+    renderAll();
+  } else {
+    showBanner('err','Could not read tasks.json and there is no local copy to fall back on.',
+      'Double-click start-dashboard.bat in the project folder, or load tasks.json by hand below. Error: ' + (err && err.message ? err.message : 'unknown'), true);
+  }
+  updateSaveBtn(); applyReadOnlyUi(); renderBoardTabs();
+}
+
+/* ---------- boards ---------- */
+function cleanBoardList(list){
+  return (Array.isArray(list) ? list : [])
+    .filter(b => b && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(String(b.id)))
+    .map(b => ({ id: String(b.id), name: String(b.name || b.id) }));
+}
+function setBoard(id){
+  BOARD_ID = id;
+  LEDGER_URL = BOARDS_URL + '/' + encodeURIComponent(id);
+  SAVE_URL = LEDGER_URL;
+  LS_KEY = LS_PREFIX + id;
+  try { localStorage.setItem(LS_LAST, id); } catch(e){}
+  // Keep the address bar on this board so a refresh, or a bookmark, comes back here.
+  try {
+    if (typeof history !== 'undefined' && history.replaceState && typeof location !== 'undefined') {
+      const q = new URLSearchParams(location.search);
+      if (q.get('board') !== id) { q.set('board', id); history.replaceState(null, '', '?' + q.toString() + location.hash); }
+    }
+  } catch(e){}
+}
+function urlBoard(){
+  try { return typeof location !== 'undefined' ? new URLSearchParams(location.search).get('board') : null; } catch(e){ return null; }
+}
+function pickBoard(list){
+  const ids = list.map(b => b.id);
+  const fromUrl = urlBoard();
+  if (fromUrl && ids.includes(fromUrl)) return fromUrl;
+  let last = null; try { last = localStorage.getItem(LS_LAST); } catch(e){}
+  if (last && ids.includes(last)) return last;
+  return ids[0] || null;
+}
+function readLocalIndex(){
+  try { const l = cleanBoardList(JSON.parse(localStorage.getItem(LS_INDEX))); return l.length ? l : null; } catch(e){ return null; }
+}
+function saveLocalIndex(){ try { localStorage.setItem(LS_INDEX, JSON.stringify(BOARDS)); } catch(e){} }
+function slugId(name, list){
+  const base = String(name || '').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40).replace(/-+$/g, '') || 'board';
+  const taken = new Set((list || []).map(b => b.id));
+  let id = base;
+  for (let n = 2; taken.has(id); n++) id = base.slice(0, 36) + '-' + n;
+  return id;
+}
+/* Browser mode keeps its own list. A browser that used the board before tabs
+   existed has one board under the old key: it becomes the first tab. */
+function loadLocalBoards(){
+  let list = readLocalIndex();
+  if (!list) {
+    list = [];
+    let legacy = null;
+    try { legacy = JSON.parse(localStorage.getItem(LS_LEGACY)); } catch(e){}
+    if (legacy && legacy.state) {
+      const id = slugId(legacy.state.project, list);
+      try { localStorage.setItem(LS_PREFIX + id, JSON.stringify(legacy)); } catch(e){}
+      list.push({ id, name: String(legacy.state.project || id) });
+    } else {
+      SEEDS.forEach(sd => list.push({ id: slugId(sd.project, list), name: String(sd.project) }));
+    }
+  }
+  BOARDS = list;
+  saveLocalIndex();
+}
+function renderBoardTabs(){
+  const nav = document.getElementById('boardTabs');
+  if (!nav) return;
+  // A rename in Settings shows on the tab straight away.
+  const cur = BOARDS.find(b => b.id === BOARD_ID);
+  if (cur && state && state.project && cur.name !== String(state.project)) { cur.name = String(state.project); saveLocalIndex(); }
+  nav.innerHTML = BOARDS.map(b =>
+      '<button class="btab" type="button" title="' + esc(b.name) + '"'
+      + (b.id === BOARD_ID ? ' aria-current="page"' : '')
+      + ' onclick="switchBoard(\'' + esc(b.id) + '\')">' + esc(clip(b.name, 40)) + '</button>').join('')
+    + '<button class="btab add" type="button" onclick="newBoard()">+ New board</button>';
+  // On a narrow screen the strip scrolls. Never leave the open board's tab off-screen.
+  const active = nav.querySelector && nav.querySelector('[aria-current="page"]');
+  if (active && active.scrollIntoView) { try { active.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch(e){} }
+}
+/* A fresh board: one starter task, because the server refuses an empty task
+   list. Columns and their roles carry over from the board you are on, so a
+   workflow you set up once does not have to be rebuilt. */
+function makeStarterPlan(name){
+  const start = today(), target = new Date(start.getTime() + 56*DAY);
+  const letters = String(name).replace(/[^A-Za-z]/g, '').slice(0,3).toUpperCase();
+  const prefix = letters.length >= 2 ? letters : 'PRJ';
+  const sections = ['Phase 1','Phase 2','Phase 3'];
+  const settings = JSON.parse(JSON.stringify((state && state.settings && Array.isArray(state.settings.columns)) ? state.settings : LEGACY_SETTINGS));
+  return {
+    project: String(name), goal: '', created: fmtD(start), targetDate: fmtD(target),
+    schemaVersion: 2, keyPrefix: prefix, nextKeyNum: 102,
+    sections, rules: [], backlog: [], settings,
+    tasks: [{
+      id: 'task-' + Date.now().toString(36), key: prefix + '-101', title: 'Add your first task', section: sections[0],
+      start: fmtD(start), due: fmtD(new Date(start.getTime() + 7*DAY)), done: null,
+      status: settings.defaultKey || DEFAULT_STATUS,
+      milestone: false, epic: false, epicKey: null,
+      description: 'Replace this with your first real task: edit the title, dates and criteria. Once you have added a second task, you can delete this one.',
+      acceptanceCriteria: [{ text: 'A real task is on the board', done: false }], history: []
+    }]
+  };
+}
+async function createBoardOnServer(plan){
+  try {
+    const res = await fetch(BOARDS_URL, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(plan) });
+    const out = await res.json();
+    if (!out.ok) { toast('Could not create the board: ' + (out.errors || ['unknown'])[0], 'bad', 8000); return null; }
+    BOARDS = cleanBoardList(out.boards);
+    saveLocalIndex();
+    return out.id;
+  } catch(e){
+    toast('Could not create the board: ' + e.message, 'bad', 8000);
+    return null;
+  }
+}
+function goToBoard(id){
+  try { localStorage.setItem(LS_LAST, id); } catch(e){}
+  if (typeof location !== 'undefined') location.search = '?board=' + encodeURIComponent(id);
+}
+/* Never leave a board with an edit in flight. Flush the save first; if it
+   cannot land, say so and let the person choose. The edit is still cached in
+   this browser either way and is offered again on the way back. */
+async function switchBoard(id){
+  if (id === BOARD_ID) return;
+  if (canWrite && dirty && !conflict) {
+    clearTimeout(saveTimer); autosavePending = false;
+    for (let i = 0; i < 30 && saving; i++) await new Promise(r => setTimeout(r, 100));
+    if (dirty) await saveToLedger(true);
+    for (let i = 0; i < 30 && saving; i++) await new Promise(r => setTimeout(r, 100));
+  }
+  if ((dirty || conflict) && !confirm('Your latest change on this board has not saved. It stays in this browser and is offered again when you come back.\n\nSwitch boards anyway?')) return;
+  goToBoard(id);
+}
+async function newBoard(){
+  if (locked()) return;
+  const name = (prompt('Name your new board', '') || '').trim().slice(0, 60);
+  if (!name) return;
+  const plan = makeStarterPlan(name);
+  if (standalone) {
+    const id = slugId(name, BOARDS);
+    try {
+      localStorage.setItem(LS_PREFIX + id, JSON.stringify({ baseUpdated: null, savedAt: fmtD(today()), dirty: false, ledger: plan, state: plan }));
+    } catch(e){ toast('This browser could not store another board: ' + e.message, 'bad', 8000); return; }
+    BOARDS.push({ id, name });
+    saveLocalIndex();
+    return switchBoard(id);
+  }
+  const id = await createBoardOnServer(plan);
+  if (id) return switchBoard(id);
+}
+async function deleteCurrentBoard(){
+  if (locked()) return;
+  if (BOARDS.length <= 1) { toast('This is your only board. Create another board before deleting this one.', 'bad', 6000); return; }
+  const n = state.tasks.length, name = state.project || BOARD_ID;
+  const where = standalone
+    ? 'It is removed from this browser and cannot be recovered. Export first to keep a copy.'
+    : 'The file moves to boards/deleted/ in the project folder, so it can be recovered.';
+  if (!confirm('Delete the board "' + name + '" and its ' + n + ' task' + (n === 1 ? '' : 's') + '?\n\n' + where)) return;
+  clearTimeout(saveTimer); autosavePending = false;
+  if (standalone) {
+    try { localStorage.removeItem(LS_KEY); } catch(e){}
+    BOARDS = BOARDS.filter(b => b.id !== BOARD_ID);
+    saveLocalIndex(); dirty = false;
+    return goToBoard(BOARDS[0].id);
+  }
+  try {
+    const res = await fetch(LEDGER_URL, { method:'DELETE' });
+    const out = await res.json();
+    if (!out.ok) { toast('Could not delete the board: ' + (out.errors || ['unknown'])[0], 'bad', 8000); return; }
+    try { localStorage.removeItem(LS_KEY); } catch(e){}
+    BOARDS = cleanBoardList(out.boards); saveLocalIndex(); dirty = false;
+    goToBoard(BOARDS[0].id);
+  } catch(e){ toast('Could not delete the board: ' + e.message, 'bad', 8000); }
+}
+
+function adoptLedger(fetched){
+  ledger = fetched;
+  const cached = readCache();
+  if (cached && cached.baseUpdated === fetched.updated && cached.dirty) {
+    state = cached.state; dirty = true;
+    showBanner('info','Unsaved local edits restored.','Click Save now to write them to this board.', false);
+  } else if (cached && cached.dirty && cached.baseUpdated !== fetched.updated) {
+    /* The ledger moved while this browser held unsaved edits. This used to
+       discard them silently, which lost a real status change on 2026-08-07.
+       Never decide this on the user's behalf — show both and let them pick. */
+    pendingLocal = cached.state;
+    state = JSON.parse(JSON.stringify(fetched));
+    dirty = false;
+    const diff = describeDrift(pendingLocal, fetched);
+    showBanner('warn', 'Your unsaved edits are still here, but the ledger changed underneath them.',
+      'tasks.json moved to ' + fetched.updated + ' while your browser copy was based on ' + cached.baseUpdated + '. '
+      + 'Showing the ledger. Nothing of yours has been thrown away yet.'
+      + (diff ? '<div style="margin-top:8px">Your copy differs on: ' + diff + '</div>' : ''),
+      false, true);
+  } else {
+    state = JSON.parse(JSON.stringify(fetched));
+    dirty = false;
+  }
+  normalise();
+  writeCache();
+  renderAll();
+}
+/* The sample board carries `sampleAnchor`: the day its dates were written for.
+   Opened later, every date slides forward by the gap, so the sample always
+   reads as a project mid-flight instead of one where everything went overdue
+   while it sat in a zip. The first real edit (markDirty) drops the anchor and
+   the board stops moving. A board without an anchor is never touched. */
+function rebaseSample(){
+  if (!state || typeof state.sampleAnchor !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(state.sampleAnchor)) return;
+  const shift = daysBetween(parseD(state.sampleAnchor), today());
+  if (shift <= 0) return;          // forward only: a hand-edited future anchor never rewinds the board
+  const mv = s => (typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s))
+    ? fmtD(new Date(parseD(s).getFullYear(), parseD(s).getMonth(), parseD(s).getDate() + shift)) : s;
+  const moveTask = t => {
+    if (!t || typeof t !== 'object') return;
+    ['start','due','done','codeComplete'].forEach(f => { if (t[f]) t[f] = mv(t[f]); });
+    (Array.isArray(t.history) ? t.history : []).forEach(h => { if (h && h.at) h.at = mv(h.at); });
+  };
+  ['created','targetDate','updated'].forEach(f => { if (state[f]) state[f] = mv(state[f]); });
+  (state.tasks || []).forEach(moveTask);
+  (state.backlog || []).forEach(b => { if (b && b.parked) moveTask(b.parked); });
+  state.sampleAnchor = fmtD(today());
+}
+function normalise(){
+  rebaseSample();                // before anything reads a date
+  applySettings();               // decides what a valid status is, so it runs first
+  if (!state.keyPrefix) state.keyPrefix = 'PRJ';
+  if (!Array.isArray(state.backlog)) state.backlog = [];
+  let next = state.nextKeyNum || 101;
+  /* Backlog keys share the task sequence. They have to be in `used` before
+     anything is minted, or a promoted item could collide with a ticket. */
+  const used = new Set(state.tasks.map(t => t.key).filter(Boolean));
+  state.backlog.forEach(b => { if (b && b.key) used.add(b.key); });
+  state.tasks.forEach(t => {
+    if (!t.title) t.title = t.name || t.id;
+    if (t.name) delete t.name;
+    if (!isStatus(t.status)) t.status = t.done ? DONE_KEY : DEFAULT_STATUS;
+    if (t.done && t.status !== DONE_KEY) t.status = DONE_KEY;
+    if (!Array.isArray(t.acceptanceCriteria)) t.acceptanceCriteria = [];
+    /* Criteria written by hand, or by an older board, can be bare strings. The
+       editor reads { text, done }, so a string showed as an empty box. Fold
+       them into the current shape without losing a word. */
+    t.acceptanceCriteria = t.acceptanceCriteria
+      .map(a => typeof a === 'string' ? { text: a, done: false }
+               : (a && typeof a === 'object') ? { text: String(a.text == null ? '' : a.text), done: !!a.done } : null)
+      .filter(a => a && a.text.trim());
+    if (!Array.isArray(t.history)) t.history = [];
+    if (typeof t.description !== 'string') t.description = '';
+    if (!t.key) {                                   // anything imported without a key gets one
+      while (used.has(state.keyPrefix + '-' + next)) next++;
+      t.key = state.keyPrefix + '-' + next; used.add(t.key); next++;
+    }
+    t.epic = !!t.epic;
+    if (t.epic) { t.milestone = false; t.epicKey = null; }   // an epic cannot sit inside an epic
+    if (!t.epicKey) t.epicKey = null;
+  });
+  /* Three shapes have lived in this list: bare strings, {title, note} objects
+     added by hand during the 2026-08-21 heading sweep (which the board rendered
+     as "[object Object]"), and the current { key, text, note? }. Fold them all
+     in rather than losing the wording. */
+  state.backlog = state.backlog.map(b => {
+    if (typeof b === 'string') b = { text: b };
+    if (!b || typeof b !== 'object') b = { text: String(b) };
+    const out = { key: b.key, text: b.text || b.title || b.name || '' };
+    if (b.note) out.note = b.note;
+    if (b.parked && typeof b.parked === 'object') out.parked = b.parked;
+    if (!out.key) {
+      while (used.has(state.keyPrefix + '-' + next)) next++;
+      out.key = state.keyPrefix + '-' + next; used.add(out.key); next++;
+    }
+    return out;
+  });
+
+  // Drop links to epics that no longer exist, rather than rendering a dead tag.
+  const epicKeys = new Set(state.tasks.filter(t => t.epic).map(t => t.key));
+  state.tasks.forEach(t => { if (t.epicKey && !epicKeys.has(t.epicKey)) t.epicKey = null; });
+  state.nextKeyNum = next;
+}
+function mintKey(){
+  let n = state.nextKeyNum || 101;
+  const used = new Set(state.tasks.map(t => t.key).filter(Boolean));
+  (state.backlog || []).forEach(b => { if (b && b.key) used.add(b.key); });
+  while (used.has(state.keyPrefix + '-' + n)) n++;
+  state.nextKeyNum = n + 1;
+  return state.keyPrefix + '-' + n;
+}
+
+function readCache(){ try { return JSON.parse(localStorage.getItem(LS_KEY)); } catch(e){ return null; } }
+function writeCache(){
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      baseUpdated: ledger ? ledger.updated : null,
+      savedAt: fmtD(today()), dirty, ledger, state
+    }));
+  } catch(e){}
+}
+function markDirty(){
+  // Any real edit makes this the user's board. Sample dates stop moving from here.
+  if (state && state.sampleAnchor) delete state.sampleAnchor;
+  // Queue the autosave first, so the button never flashes up during the debounce.
+  dirty = true; writeCache(); scheduleSave(); updateSaveBtn();
+}
+
+function scheduleSave(){
+  if (!canWrite) return;                 // read-only: nothing to schedule
+  if (conflict) return;                  // a conflict is waiting on a human choice
+  clearTimeout(saveTimer);
+  autosavePending = true;
+  saveTimer = setTimeout(() => { autosavePending = false; saveToLedger(true); }, 600);
+}
+
+/* Single gate in front of every mutation. When the page cannot persist, the
+   board must refuse the edit rather than accept it and look committed. */
+function locked(){
+  if (canWrite) return false;
+  toast('Read-only — this page has no server, so nothing here can be saved. Run start-dashboard.bat.', 'bad', 6000);
+  return true;
+}
+function applyReadOnlyUi(){
+  document.body.classList.toggle('readonly', !canWrite);
+}
+
+function updateSaveBtn(){
+  const b = document.getElementById('saveBtn'), p = document.getElementById('savePill');
+  b.disabled = !canWrite || !dirty || saving;
+  b.textContent = !canWrite ? 'Save unavailable' : (saving ? 'Saving…' : (saveFailed ? 'Retry save' : (dirty ? 'Save now' : 'Saved')));
+  /* Autosave owns the normal path and the pill reports it. The button appears
+     only when a person has to act: a failed save, or restored edits that no
+     autosave is queued for. Showing it the rest of the time put two "Saved"
+     labels side by side in the header. */
+  b.hidden = !(canWrite && dirty && !saving && !autosavePending && !conflict);
+  if (!p) return;
+  let cls, txt;
+  if (!canWrite)        { cls='ro';   txt='READ-ONLY — no server, edits blocked'; }
+  else if (conflict)    { cls='bad';  txt='CONFLICT — choose below, nothing overwritten'; }
+  else if (saveFailed)  { cls='bad';  txt='SAVE FAILED — click Retry save'; }
+  else if (saving)      { cls='work'; txt='Saving…'; }
+  else if (dirty)       { cls='work'; txt='Unsaved…'; }
+  else                  { cls='ok';   txt='Saved' + (lastSavedAt ? ' ' + lastSavedAt : ''); }
+  p.className = 'savepill ' + cls;
+  p.textContent = txt;
+}
+
+async function saveToLedger(auto){
+  if (!canWrite || !dirty) return;
+  if (standalone) {                              // no server: this browser is the store
+    clearTimeout(saveTimer);
+    state.updated = fmtD(today());
+    dirty = false; saveFailed = false;
+    lastSavedAt = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    writeCache(); updateSaveBtn(); renderStats();
+    return;
+  }
+  if (saving) { scheduleSave(); return; }        // a write is in flight; queue behind it
+  clearTimeout(saveTimer);
+  saving = true; saveFailed = false; updateSaveBtn();
+  const dirtyAtSend = JSON.stringify(state);
+  try {
+    const res = await fetch(SAVE_URL, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'If-Match': ledgerRev || '"none"' },
+      body: JSON.stringify(state)
+    });
+    const out = await res.json();
+
+    if (res.status === 409 && out.conflict) {
+      // Someone else moved the ledger. Nothing of theirs and nothing of ours is
+      // lost: keep our copy aside, show theirs, and let the human decide.
+      saving = false; conflict = true; saveFailed = true;
+      ledgerRev = out.rev || ledgerRev;
+      pendingLocal = JSON.parse(JSON.stringify(state));
+      if (out.plan) {
+        ledger = out.plan;
+        state = JSON.parse(JSON.stringify(out.plan));
+        normalise(); renderAll();
+      }
+      dirty = false; writeCache(); updateSaveBtn();
+      const diff = out.plan ? describeDrift(pendingLocal, out.plan) : '';
+      showBanner('warn', 'This board changed on disk while it was open.',
+        'Your save was refused, so nothing was overwritten. The board is now showing what is on disk. '
+        + 'Your version is held safely to one side.'
+        + (diff ? '<div style="margin-top:8px">Yours differs on: ' + diff + '</div>' : ''),
+        false, true);
+      return;
+    }
+    if (res.status === 428) {
+      saving = false; saveFailed = true; updateSaveBtn();
+      toast('This board does not know which ledger revision it is editing. Click Reload.', 'bad', 8000);
+      return;
+    }
+
+    if (!out.ok) {
+      toast('Ledger rejected the save: ' + out.errors[0] + (out.errors.length > 1 ? ' (+' + (out.errors.length-1) + ' more)' : ''), 'bad', 8000);
+      console.warn('Ledger rejected the save:', out.errors);
+      saving = false; saveFailed = true; updateSaveBtn(); return;
+    }
+    // Compare BEFORE stamping anything the server assigned. Doing it after meant
+    // the server's own `updated` counted as a user edit, so dirty never cleared
+    // and autosave re-queued itself forever.
+    const changedDuringSend = JSON.stringify(state) !== dirtyAtSend;
+    state.updated = out.updated;
+    if (out.rev) ledgerRev = out.rev;
+    ledger = JSON.parse(JSON.stringify(state));
+    dirty = changedDuringSend;
+    saving = false; saveFailed = false;
+    lastSavedAt = new Date().toTimeString().slice(0,5);
+    writeCache(); updateSaveBtn(); renderStats();
+    if (!auto) toast('Saved. Backup: ' + out.backup, 'good', 4000);
+    if (dirty) scheduleSave();
+  } catch(e){
+    saving = false; saveFailed = true; updateSaveBtn();
+    toast('Save failed, your edits are still here: ' + e.message, 'bad', 8000);
+  }
+}
+
+function reloadFromLedger(){
+  if (dirty && !confirm('Discard unsaved local edits and reload this board from disk?')) return;
+  dirty = false;
+  try { localStorage.removeItem(LS_KEY); } catch(e){}
+  hideBanner(); boot();
+}
+function pickFile(e){
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try { source = 'tasks.json (loaded by hand)'; hideBanner(); adoptLedger(JSON.parse(r.result)); }
+    catch(err){ alert('That file is not valid JSON: ' + err.message); }
+  };
+  r.readAsText(f);
+}
+function exportJSON(){
+  state.updated = fmtD(today());
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = (BOARD_ID || 'board') + '.json'; a.click();
+  URL.revokeObjectURL(a.href);
+}
+function showBanner(kind,title,body,picker,drift){
+  const el = document.getElementById('banner');
+  el.className = 'banner ' + kind;
+  el.innerHTML = '<b>' + title + '</b>' + body
+    + (picker ? '<div class="row"><button class="btn" onclick="document.getElementById(\'filePick\').click()">Load tasks.json…</button></div>' : '')
+    + (drift ? '<div class="row">'
+        + '<button class="btn primary" onclick="keepLocal()">Keep my edits</button>'
+        + '<button class="btn" onclick="takeLedger()">Discard mine, use the ledger</button></div>' : '');
+}
+
+/* ---------- drift resolution ---------- */
+let pendingLocal = null;
+
+// Name what actually differs, so the choice is informed rather than a coin toss.
+function describeDrift(mine, theirs){
+  const byId = {};
+  (theirs.tasks || []).forEach(t => byId[t.id] = t);
+  const notes = [];
+  (mine.tasks || []).forEach(t => {
+    const o = byId[t.id];
+    if (!o) { notes.push((t.key || t.id) + ' (only in yours)'); return; }
+    const fields = [];
+    if (colOf(t.status) !== colOf(o.status)) fields.push('status ' + labelOf(o.status) + '→' + labelOf(t.status));
+    if ((t.title || '') !== (o.title || '')) fields.push('title');
+    if ((t.due || '') !== (o.due || '')) fields.push('due date');
+    if ((t.done || null) !== (o.done || null)) fields.push('done date');
+    if (JSON.stringify(t.acceptanceCriteria || []) !== JSON.stringify(o.acceptanceCriteria || [])) fields.push('criteria');
+    if (fields.length) notes.push((t.key || t.id) + ': ' + fields.join(', '));
+  });
+  return notes.slice(0, 8).join(' · ') + (notes.length > 8 ? ' · +' + (notes.length - 8) + ' more' : '');
+}
+function keepLocal(){
+  if (!pendingLocal) return;
+  state = pendingLocal; pendingLocal = null;
+  conflict = false; saveFailed = false;
+  normalise(); dirty = true; writeCache();
+  hideBanner(); renderAll();
+  scheduleSave();                       // written on the revision now on disk
+  toast('Your version is back and saving now.', 'good', 5000);
+}
+function takeLedger(){
+  pendingLocal = null;
+  conflict = false; saveFailed = false; dirty = false;
+  hideBanner(); writeCache(); renderAll();
+  toast('Using the ledger. Your local copy is gone.');
+}
+function hideBanner(){ const el = document.getElementById('banner'); el.className='banner'; el.innerHTML=''; }
+let toastT = null;
+function toast(msg, kind, ms){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast show ' + (kind||'');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { el.className = 'toast ' + (kind||''); }, ms || 3000);
+}
+
+/* ---------- derived ---------- */
+function weekStarts(){
+  const first = sundayOf(parseD(state.created)), end = parseD(state.targetDate), weeks = [];
+  for (let d = new Date(first); d <= end; d.setDate(d.getDate()+7)) weeks.push(new Date(d));
+  return weeks;
+}
+/* Epics and milestones are markers, not work. Counting them would inflate the
+   required pace the moment a grouping is added, so both are excluded here. This
+   is the one function the pace maths reads. */
+function planTasks(){ return state.tasks.filter(t => !t.milestone && !t.epic); }
+
+/* ---------- epics ---------- */
+function epics(){ return state.tasks.filter(t => t.epic); }
+function epicByKey(k){ return state.tasks.find(t => t.epic && t.key === k) || null; }
+function childrenOf(k){ return state.tasks.filter(t => !t.epic && t.epicKey === k); }
+function epicProgress(k){
+  const kids = childrenOf(k);
+  return { total: kids.length, done: kids.filter(t => t.done).length };
+}
+function epicLabel(t){
+  const e = t.epicKey ? epicByKey(t.epicKey) : null;
+  return e ? e.title : '';
+}
+function stats(){
+  const plan = planTasks(), miles = state.tasks.filter(t => t.milestone);
+  const done = plan.filter(t => t.done).length, open = plan.length - done;
+  const overdue = state.tasks.filter(t => !t.done && parseD(t.due) < today()).length;
+  const daysLeft = Math.max(0, daysBetween(today(), parseD(state.targetDate)));
+  const weeksLeft = Math.max(daysLeft/7, 1/7);
+  const elapsedW = Math.max(daysBetween(parseD(state.created), today())/7, 1/7);
+  const ws = sundayOf(today()), we = new Date(ws.getTime()+7*DAY);
+  const thisWeek = plan.filter(t => t.done && parseD(t.done) >= ws && parseD(t.done) < we).length;
+  return { plan:plan.length, done, open, miles:miles.length, milesDone:miles.filter(t=>t.done).length,
+           overdue, daysLeft, required:open/weeksLeft, actual:done/elapsedW, thisWeek };
+}
+
+/* ---------- render ---------- */
+function renderStats(){
+  const s = stats();
+  const items = [
+    [s.done + ' / ' + s.plan, 'tasks verified done'],
+    [s.milesDone + ' / ' + s.miles, 'milestones hit'],
+    [s.overdue, 'overdue', s.overdue > 0 ? 'var(--red)' : 'var(--green)'],
+    [s.daysLeft, 'days to ' + shortD(state.targetDate)],
+    [s.required.toFixed(1), 'required pace /wk'],
+    [s.actual.toFixed(1), 'actual pace /wk', s.actual >= s.required ? 'var(--green)' : 'var(--red)'],
+    [s.thisWeek, 'done this week', s.thisWeek >= s.required ? 'var(--green)' : 'var(--red)']
+  ];
+  document.getElementById('statRow').innerHTML = items.map(i =>
+    '<div class="stat"><div class="v" style="color:' + (i[2]||'var(--text)') + '">' + i[0] + '</div><div class="l">' + i[1] + '</div></div>').join('');
+  const onTrack = s.overdue === 0 && s.actual >= s.required*0.8;
+  const b = document.getElementById('paceBadge');
+  b.className = 'badge ' + (onTrack ? 'on' : 'off');
+  b.textContent = onTrack ? 'ON TRACK' : (s.overdue > 0 ? s.overdue + ' OVERDUE' : 'BEHIND PACE');
+  document.getElementById('metaLine').textContent =
+    'Target ' + state.targetDate + ' · ledger updated ' + state.updated + ' · ' + source +
+    ' · this week ' + s.thisWeek + ' done vs ' + s.required.toFixed(1) + ' required' + (dirty ? ' · UNSAVED EDITS' : '');
+}
+
+function visibleTasks(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const sec = document.getElementById('fSec').value;
+  const over = document.getElementById('fOver').checked;
+  const mile = document.getElementById('fMile').checked;
+  const ep = document.getElementById('fEpic').value;
+  return state.tasks.filter(t => {
+    if (sec && t.section !== sec) return false;
+    // Filtering to an epic shows the epic itself plus everything under it.
+    if (ep && !(t.epicKey === ep || (t.epic && t.key === ep))) return false;
+    if (over && (t.done || parseD(t.due) >= today())) return false;
+    if (mile && !t.milestone) return false;
+    if (q) {
+      const hay = (t.title + ' ' + t.id + ' ' + (t.key||'') + ' ' + (t.description||'') + ' '
+                   + (t.verifyNote||'') + ' ' + epicLabel(t)).toLowerCase();
+      if (hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+}
+
+function renderBoard(){
+  const vis = visibleTasks();
+  const secIdx = s => Math.max(0, state.sections.indexOf(s));
+  let html = '';
+  COLUMNS.forEach(c => {
+    const isDoneCol = c.key === DONE_KEY;
+    /* Work columns read forward: soonest due first, because that is the order
+       you have to act in. Done reads backward: newest verified first, because
+       nobody scrolls a finished column to find the oldest thing on it. */
+    const all = vis.filter(t => colOf(t.status) === c.key)
+      .sort(isDoneCol
+        ? (a,b) => ((b.done||'') < (a.done||'') ? -1 : (b.done||'') > (a.done||'') ? 1 : 0)
+        : (a,b) => (a.due < b.due ? -1 : a.due > b.due ? 1 : 0));
+    /* Hidden, not removed. `all.length` still drives the header count so the
+       column never understates how much work is actually sitting in it. */
+    const capped = isDoneCol && DONE_CAP > 0 && !showAllDone && all.length > DONE_CAP;
+    const inCol = capped ? all.slice(0, DONE_CAP) : all;
+    const hidden = all.length - inCol.length;
+    html += '<div class="column" data-col="' + c.key + '"'
+      + ' ondragenter="dragEnter(event)" ondragover="dragOver(event)"'
+      + ' ondragleave="dragLeave(event)" ondrop="dropCard(event)">'
+      + '<div class="col-head"><span class="t"><span class="dot" style="background:' + c.dot + '"></span>' + c.label + '</span>'
+      + '<span class="n">' + all.length + '</span></div>';
+    if (!all.length) html += '<div class="empty-col">Nothing here</div>';
+    inCol.forEach(t => {
+      const late = !t.done && parseD(t.due) < today();
+      const lateBy = late ? daysBetween(parseD(t.due), today()) : 0;
+      const ac = t.acceptanceCriteria || [];
+      const acDone = ac.filter(a => a.done).length;
+      const prog = t.epic ? epicProgress(t.key) : null;
+      html += '<div class="card sec' + secIdx(t.section) + (t.milestone?' milestone':'') + (t.epic?' epic':'') + (t.done?' done':'') + '"'
+        + ' draggable="true" tabindex="0" data-id="' + esc(t.id) + '"'
+        + ' title="' + esc(t.key + ' — ' + t.title) + '"'
+        + ' ondragstart="dragStart(event)" ondragend="dragEnd(event)"'
+        + ' onclick="cardClick(event)" onkeydown="cardKey(event)">'
+        + '<div class="row" style="margin-bottom:6px">'
+        +   '<span class="key">' + esc(t.key || t.id) + '</span>'
+        +   '<span class="due' + (late?' late':'') + '">' + (t.done ? '✓ ' + shortD(t.done) : shortD(t.due) + (late ? ' · ' + lateBy + 'd late' : '')) + '</span>'
+        +   (ac.length ? '<span class="ac">' + acDone + '/' + ac.length + '</span>' : '')
+        +   (failCount(t) ? '<span class="fails" title="Sent back ' + failCount(t) + ' time(s)">⟲ ' + failCount(t) + '</span>' : '')
+        +   (prog ? '<span class="ac" title="Tickets in this epic that are done">' + prog.done + '/' + prog.total + ' in epic</span>' : '')
+        + '</div>'
+        + '<div class="title">' + (t.milestone ? '<span class="dia">◆</span> ' : '')
+            + (t.epic ? '<span class="dia">▤</span> ' : '') + esc(t.title) + '</div>'
+        + (!t.epic && t.epicKey ? '<div class="epictag" title="Epic">' + esc(epicLabel(t)) + '</div>' : '')
+        + '<select class="card-status" data-id="' + esc(t.id) + '"'
+        +   ' onchange="cardStatusChange(event)" onclick="event.stopPropagation()"'
+        +   ' onmousedown="event.stopPropagation()" draggable="false">'
+        +   statusOptions(colOf(t.status), t.status)
+        + '</select>'
+        + '</div>';
+    });
+    if (hidden > 0) {
+      html += '<button class="col-more" onclick="toggleAllDone()" title="Nothing is deleted. These are on the board, just collapsed.">'
+        + hidden + ' older hidden · Show all</button>';
+    } else if (isDoneCol && showAllDone && DONE_CAP > 0 && all.length > DONE_CAP) {
+      html += '<button class="col-more" onclick="toggleAllDone()">Show newest ' + DONE_CAP + ' only</button>';
+    }
+    html += '</div>';
+  });
+  document.getElementById('board').innerHTML = html;
+  document.getElementById('boardCount').textContent = vis.length + ' of ' + state.tasks.length + ' shown';
+}
+
+/* Pure view state. No markDirty(), no save, nothing reaches tasks.json. */
+function toggleAllDone(){ showAllDone = !showAllDone; renderBoard(); }
+
+// A click fires on the source card right after a drop. Swallow that one.
+function cardClick(e){
+  if (justDragged) return;
+  openTask(e.currentTarget.dataset.id);
+}
+function cardStatusChange(e){
+  if (locked()) return;
+  const t = taskById(e.target.dataset.id);
+  const target = resolveTarget(e.target.value);
+  if (t && target) moveTask(t, target);
+}
+
+function renderLists(){
+  const soon = fmtD(new Date(today().getTime() + 14*DAY));
+  document.getElementById('backlogList').innerHTML = state.backlog.map((b,i) => {
+    if (pendingPromote === i) {
+      const back = b.parked || null;
+      const secPick = back && state.sections.indexOf(back.section) !== -1 ? back.section : state.sections[0];
+      const duePick = back && back.due && back.due >= fmtD(today()) ? back.due : soon;
+      return '<li class="promote"><div class="msg"><b>Send ' + esc(b.key) + ' to the board</b><br>' + esc(b.text)
+        + (back ? '<br>Was on the board before. Its criteria and activity log come back with it.' : '') + '</div>'
+        + '<select id="promoSec" aria-label="Section">'
+        +   state.sections.map(sec =>
+              '<option' + (sec === secPick ? ' selected' : '') + '>' + esc(sec) + '</option>').join('')
+        + '</select>'
+        + '<input type="date" id="promoDue" value="' + duePick + '" aria-label="Due date">'
+        + '<button class="btn primary" onclick="confirmPromote(' + i + ')">Send to ' + esc(labelOf(INTAKE_KEY)) + '</button>'
+        + '<button class="btn" onclick="cancelPromote()">Cancel</button>'
+        + '<div class="sub">Starts today. A ticket needs a section and a due date, and it counts toward pace the moment it lands.</div>'
+        + '</li>';
+    }
+    return '<li class="bl' + (i % 2 ? ' alt' : '') + '" draggable="true" data-i="' + i + '"'
+      + ' ondragstart="blDragStart(event)" ondragend="blDragEnd(event)"'
+      + ' ondragover="blDragOver(event)" ondragleave="blDragLeave(event)" ondrop="blDrop(event)">'
+      + '<span class="key" title="Keeps this number when it goes to the board">' + esc(b.key) + '</span>'
+      + '<span class="name blopen" role="button" tabindex="0" data-key="' + esc(b.key) + '"'
+      +   ' title="Open this item" onclick="openBacklogItem(\'' + esc(b.key) + '\')"'
+      +   ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openBacklogItem(\'' + esc(b.key) + '\')}">'
+      +   esc(b.text) + (b.note ? '<span class="blnote">' + esc(b.note) + '</span>' : '') + '</span>'
+      /* Drag is the fast path, but it does not exist on touch and cannot be
+         reached from a keyboard, so the same move is a button as well. */
+      + '<button class="mini" onclick="moveBacklog(' + i + ',-1)" title="Move up"' + (i === 0 ? ' disabled' : '') + '>&#8593;</button>'
+      + '<button class="mini" onclick="moveBacklog(' + i + ',1)" title="Move down"' + (i === state.backlog.length-1 ? ' disabled' : '') + '>&#8595;</button>'
+      + '<button class="mini" onclick="startPromote(' + i + ')" title="Make this a ticket on the board">&rarr; Board</button>'
+      + '<button class="mini" onclick="delBacklog(' + i + ')" title="Delete this item">&#10005;</button></li>';
+  }).join('') || '<li>Empty</li>';
+  document.getElementById('rulesList').innerHTML = state.rules.map(r => '<li><span class="name">' + esc(r) + '</span></li>').join('');
+  const sel = document.getElementById('fSec');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">All sections</option>' + state.sections.map(s => '<option>' + esc(s) + '</option>').join('');
+  const es = document.getElementById('fEpic'), keep = es.value;
+  es.innerHTML = '<option value="">All epics</option>'
+    + epics().map(e => '<option value="' + esc(e.key) + '">' + esc(e.title) + '</option>').join('');
+  es.value = epicByKey(keep) ? keep : '';
+  sel.value = cur;
+}
+
+/* ---------- drag and drop ----------
+   Notes on the fiddly bits, because they are all real browser behaviour:
+   - dataTransfer.setData is REQUIRED or Firefox never starts the drag.
+   - a click fires on the source card after a drop, which would open the modal
+     on top of the move. justDragged swallows exactly one click.
+   - dragleave fires when the pointer crosses a child element, so a naive
+     handler strips the highlight constantly. Counting enter/leave fixes it,
+     and `.card *{pointer-events:none}` stops children firing events at all.
+   Column order is by due date on purpose, so the most overdue card is always
+   on top. Dragging changes status, not position within a column.
+------------------------------------- */
+let dragId = null, justDragged = false;
+const dragDepth = new WeakMap();
+
+function dragStart(e){
+  if (locked()) return;
+  dragId = e.currentTarget.dataset.id;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', dragId); } catch(err){}   // Firefox needs this
+}
+function dragEnd(e){
+  e.currentTarget.classList.remove('dragging');
+  clearDropHints();
+  justDragged = true;
+  setTimeout(() => { justDragged = false; }, 120);
+  dragId = null;
+}
+function clearDropHints(){
+  document.querySelectorAll('.column').forEach(c => { c.classList.remove('drop'); dragDepth.set(c, 0); });
+}
+function dragEnter(e){
+  if (!dragId) return;
+  const c = e.currentTarget;
+  dragDepth.set(c, (dragDepth.get(c) || 0) + 1);
+  if (colOf(taskById(dragId).status) !== c.dataset.col) c.classList.add('drop');
+}
+function dragOver(e){
+  if (!dragId) return;
+  e.preventDefault();                       // required, or the drop never fires
+  e.dataTransfer.dropEffect = 'move';
+}
+function dragLeave(e){
+  const c = e.currentTarget;
+  const n = (dragDepth.get(c) || 1) - 1;
+  dragDepth.set(c, n);
+  if (n <= 0) c.classList.remove('drop');
+}
+function taskById(id){ return state.tasks.find(x => x.id === id); }
+
+function dropCard(e){
+  if (locked()) return;
+  e.preventDefault();
+  clearDropHints();
+  const id = dragId || (e.dataTransfer ? e.dataTransfer.getData('text/plain') : null);
+  if (!id) return;
+  const col = e.currentTarget.dataset.col;
+  const t = taskById(id);
+  const target = COLUMNS.find(c => c.key === col);
+  dragId = null;
+  if (!t || !target) return;
+  if (colOf(t.status) === col) return;      // dropped back where it came from
+  moveTask(t, target);
+}
+
+function colIdx(status){ return COLUMNS.findIndex(c => c.key === colOf(status)); }
+
+/* A ticket that fails verification does NOT become a new subtask. It is the
+   same ticket, not done yet. It moves backward and carries a required reason,
+   which lands in the activity log. Subtasks would fragment the ledger and
+   double-count rework in the pace math. */
+function moveTask(t, target, note){
+  // The authoritative read-only gate. Entry points are guarded too, but arrow-key
+  // moves reach this directly (cardKey), which slipped past the first pass on
+  // 2026-08-08 and would have let the board show a status it could never save.
+  if (locked()) return;
+  const fromStatus = colOf(t.status);
+  if (fromStatus === target.key && !target.viaFail) return;
+  const backward = !!target.viaFail || colIdx(target.key) < colIdx(fromStatus);
+
+  if (backward && note === undefined) {
+    askReason(t, target, n => moveTask(t, target, n));
+    return;
+  }
+
+  const from = labelOf(fromStatus);
+  t.status = target.key;
+
+  if (target.key === DONE_KEY) {
+    if (!t.done) t.done = fmtD(today());
+    (t.acceptanceCriteria || []).forEach(a => a.done = true);
+  } else if (t.done) {
+    t.done = null;                          // moving out of Done un-verifies it
+  }
+  // A failed verification means the criteria are unproven again.
+  if (backward && (fromStatus === DONE_KEY || fromStatus === FAIL_FROM)) {
+    (t.acceptanceCriteria || []).forEach(a => a.done = false);
+  }
+
+  logEntry(t, { from, to: labelOf(target.key), note: (note || '').trim(),
+                fail: backward, failedVerification: !!target.viaFail });
+
+  markDirty(); renderStats();
+  // Re-render OUT of the drop handler. Tearing down the dragged node while the
+  // browser is still mid-drag is a known source of dropped updates.
+  setTimeout(() => { renderBoard(); renderCharts(); }, 0);
+  if (openId === t.id) {
+    renderLog(t); renderAc();
+    const sel = document.getElementById('mStatus');
+    sel.innerHTML = statusOptions(colOf(t.status), t.status);
+  }
+
+  const unmet = (t.acceptanceCriteria || []).filter(a => !a.done).length;
+  toast(target.viaFail ? t.key + ' failed verification — back to ' + labelOf(FAIL_TO) + ', criteria reset'
+        : from + ' → ' + labelOf(target.key) + ': ' + t.key
+          + (backward ? ' — sent back, criteria reset' :
+             target.key === DONE_KEY && unmet ? ' (' + unmet + ' criteria auto-ticked, check them)' : ''));
+}
+
+function logEntry(t, e){
+  if (!Array.isArray(t.history)) t.history = [];
+  t.history.push({ at: fmtD(today()), from: e.from || null, to: e.to || null,
+                   note: e.note || '', fail: !!e.fail });
+}
+function failCount(t){ return (t.history || []).filter(h => h.fail).length; }
+
+/* ---------- reason dialog ---------- */
+let askCb = null;
+function askReason(t, target, cb){
+  askCb = cb;
+  const fail = !!target.viaFail;
+  document.getElementById('askTitle').textContent = fail
+    ? t.key + ' failed verification'
+    : 'Send ' + t.key + ' back to ' + labelOf(target.key);
+  document.getElementById('askSub').textContent = t.title + ' — '
+    + (fail ? 'goes back to In Progress.' : 'moving backward from ' + labelOf(t.status) + '.')
+    + ' This resets its acceptance criteria and clears any done date.';
+  document.getElementById('askOk').textContent = fail ? 'Record failure' : 'Send back';
+  const ta = document.getElementById('askText');
+  ta.value = '';
+  document.getElementById('askErr').classList.remove('show');
+  document.getElementById('ask').classList.add('open');
+  setTimeout(() => ta.focus(), 30);
+}
+function askConfirm(){
+  const v = document.getElementById('askText').value.trim();
+  if (!v) { document.getElementById('askErr').classList.add('show'); return; }
+  const cb = askCb; askCb = null;
+  document.getElementById('ask').classList.remove('open');
+  if (cb) cb(v);
+}
+function askCancel(){
+  askCb = null;
+  document.getElementById('ask').classList.remove('open');
+  renderBoard();                            // snap any dropdown back to the truth
+  if (openId) document.getElementById('mStatus').value = colOf(taskById(openId).status);
+}
+
+// Keyboard and touch fallback. Drag is mouse-only, so a card is also focusable
+// and moves with the left/right arrow keys.
+function cardKey(e){
+  const id = e.currentTarget.dataset.id;
+  const t = taskById(id);
+  if (!t) return;
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTask(id); return; }
+  if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  e.preventDefault();
+  const i = COLUMNS.findIndex(c => c.key === colOf(t.status));
+  const next = COLUMNS[i + (e.key === 'ArrowRight' ? 1 : -1)];
+  if (!next) return;
+  moveTask(t, next);
+  requestAnimationFrame(() => {
+    const el = document.querySelector('.card[data-id="' + CSS.escape(id) + '"]');
+    if (el) el.focus();
+  });
+}
+
+/* ---------- modal ---------- */
+function openTask(id){
+  const t = state.tasks.find(x => x.id === id);
+  if (!t) return;
+  openId = id;
+  draftAc = JSON.parse(JSON.stringify(t.acceptanceCriteria || []));
+  document.getElementById('mId').textContent =
+    (t.key ? t.key + '  ·  ' : '') + t.id + ' · ' + t.section + (t.codeComplete ? ' · code complete ' + t.codeComplete : '');
+  document.getElementById('mTitle').value = t.title;
+  titleCount();
+  document.getElementById('mStatus').innerHTML = statusOptions(colOf(t.status), t.status);
+  document.getElementById('mSection').innerHTML = state.sections.map(s => '<option>' + esc(s) + '</option>').join('');
+  document.getElementById('mSection').value = t.section;
+  document.getElementById('mStart').value = t.start || '';
+  document.getElementById('mDue').value = t.due || '';
+  document.getElementById('mDone').value = t.done || '';
+  document.getElementById('mCode').value = t.codeComplete || '';
+  document.getElementById('mMile').checked = !!t.milestone;
+  document.getElementById('mEpic').checked = !!t.epic;
+  fillEpicPicker(t);
+  applyTypeFields();
+  document.getElementById('mDesc').value = t.description || '';
+  document.getElementById('mVerify').textContent = t.verifyNote || 'None recorded.';
+  renderAc();
+  renderLog(t);
+  clearDemote();
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById('modal').classList.add('open');
+}
+function renderLog(t){
+  const h = (t.history || []).slice().reverse();
+  document.getElementById('mLog').innerHTML = h.length ? h.map(e =>
+    '<li class="' + (e.fail ? 'fail' : '') + '">'
+    + '<div class="when">' + esc(e.at)
+      + (e.failedVerification ? ' · FAILED verification' : e.fail ? ' · sent back' : '') + '</div>'
+    + (e.to ? '<div class="move">' + esc(e.from || '—') + ' → <span class="to">' + esc(e.to) + '</span></div>' : '')
+    + (e.note ? '<div class="why">' + esc(e.note) + '</div>' : '')
+    + '</li>').join('')
+    : '<li class="empty">No activity recorded yet.</li>';
+}
+function addNote(){
+  if (locked()) return;
+  const t = taskById(openId); if (!t) return;
+  const el = document.getElementById('logNew');
+  const v = el.value.trim(); if (!v) return;
+  logEntry(t, { note: v });
+  el.value = '';
+  markDirty(); renderLog(t);
+  toast('Note added to ' + t.key);
+}
+/* Epic and milestone are both "this is not a normal ticket", so they are mutually
+   exclusive. Ticking either one swaps the fields underneath rather than leaving a
+   parent-epic dropdown on a ticket that is itself an epic. */
+function onTypeToggle(which){
+  const mile = document.getElementById('mMile'), epic = document.getElementById('mEpic');
+  if (which === 'epic' && epic.checked) mile.checked = false;
+  if (which === 'mile' && mile.checked) epic.checked = false;
+  applyTypeFields();
+}
+function applyTypeFields(){
+  const isEpic = document.getElementById('mEpic').checked;
+  document.getElementById('mEpicPick').style.display = isEpic ? 'none' : '';
+  document.getElementById('mEpicRoll').style.display = isEpic ? '' : 'none';
+  if (isEpic) renderEpicChildren();
+}
+function fillEpicPicker(t){
+  const sel = document.getElementById('mEpicKey');
+  const mine = t ? t.epicKey : null;
+  sel.innerHTML = '<option value="">No epic</option>'
+    + epics().filter(e => !t || e.id !== t.id)
+        .map(e => '<option value="' + esc(e.key) + '">' + esc(e.key + ' — ' + e.title) + '</option>').join('');
+  sel.value = mine && epicByKey(mine) ? mine : '';
+}
+function renderEpicChildren(){
+  const t = state.tasks.find(x => x.id === openId);
+  const el = document.getElementById('mEpicChildren');
+  if (!t) { el.textContent = 'None yet.'; return; }
+  const kids = childrenOf(t.key);
+  if (!kids.length) {
+    el.textContent = 'Nothing yet. Open a ticket and pick this epic to add it.';
+    return;
+  }
+  const done = kids.filter(k => k.done).length;
+  el.innerHTML = '<div style="margin-bottom:6px"><b>' + done + ' of ' + kids.length + ' done</b></div>'
+    + kids.map(k => '<div>' + (k.done ? '✓ ' : '· ') + esc(k.key + ' — ' + k.title) + '</div>').join('');
+}
+
+/* A 70 character cap with no feedback meant typing silently stopped. */
+function titleCount(){
+  const el = document.getElementById('mTitle'), out = document.getElementById('mTitleCount');
+  if (!el || !out) return;
+  const n = el.value.length, max = Number(el.getAttribute('maxlength')) || 70;
+  out.textContent = n >= max ? 'At the ' + max + ' character limit' : (max - n) + ' characters left';
+  out.className = n >= max - 10 ? 'near' : '';
+}
+
+function renderAc(){
+  document.getElementById('mAc').innerHTML = draftAc.map((a,i) =>
+    '<li class="ac-item' + (a.done?' checked':'') + '">'
+    + '<input type="checkbox" ' + (a.done?'checked':'') + ' onchange="draftAc[' + i + '].done=this.checked;renderAc()">'
+    + '<textarea rows="2" oninput="draftAc[' + i + '].text=this.value">' + esc(a.text) + '</textarea>'
+    + '<button class="x" onclick="draftAc.splice(' + i + ',1);renderAc()">&times;</button></li>').join('')
+    || '<li class="ac-item" style="color:var(--text-3);font-size:.8rem;padding-left:2px">No criteria yet. Write what "done" means before you start.</li>';
+}
+function addCriterion(){
+  if (locked()) return;
+  const el = document.getElementById('acNew');
+  const v = el.value.trim(); if (!v) return;
+  draftAc.push({ text:v, done:false }); el.value = ''; renderAc();
+}
+function applyModal(){
+  if (locked()) return;
+  const t = state.tasks.find(x => x.id === openId);
+  if (!t) return;
+  const title = document.getElementById('mTitle').value.trim();
+  const start = document.getElementById('mStart').value;
+  const due = document.getElementById('mDue').value;
+  if (!title) { toast('A title is required','bad'); return; }
+  if (start && due && due < start) { toast('Due date is before the start date','bad'); return; }
+
+  // Status is applied through moveTask, so a backward move from the modal
+  // demands a reason exactly like a drag does. Everything else applies first.
+  const wanted = document.getElementById('mStatus').value;
+  const target = resolveTarget(wanted);
+  const landsOn = target ? target.key : colOf(t.status);
+  const statusChanged = wanted === FAIL_ACTION || landsOn !== colOf(t.status);
+
+  t.title = title;
+  t.section = document.getElementById('mSection').value;
+  t.start = start; t.due = due;
+  t.codeComplete = document.getElementById('mCode').value || undefined;
+  t.milestone = document.getElementById('mMile').checked;
+  const wasEpic = !!t.epic;
+  t.epic = document.getElementById('mEpic').checked;
+  if (t.epic) {
+    t.milestone = false;
+    t.epicKey = null;                                  // an epic cannot sit inside an epic
+  } else {
+    t.epicKey = document.getElementById('mEpicKey').value || null;
+    // Demoting an epic would orphan its children, so cut the links deliberately.
+    if (wasEpic) {
+      const orphans = childrenOf(t.key);
+      orphans.forEach(k => k.epicKey = null);
+      if (orphans.length) toast(t.key + ' is no longer an epic. ' + orphans.length + ' ticket(s) released from it.', 'bad', 6000);
+    }
+  }
+  t.description = document.getElementById('mDesc').value;
+  t.acceptanceCriteria = draftAc.filter(a => a.text.trim()).map(a => ({ text:a.text.trim(), done:!!a.done }));
+  if (!statusChanged) t.done = document.getElementById('mDone').value || null;
+
+  if (statusChanged && target) {
+    const id = t.id;
+    moveTask(t, target);                     // may open the reason dialog
+    // If a reason was demanded, moveTask returns before applying anything.
+    // Leave the modal open so the edit is not lost; close only once it landed.
+    if (colOf(taskById(id).status) !== landsOn) { markDirty(); renderAll(); return; }
+  }
+
+  // Keep status and done date honest with each other.
+  if (t.done && t.status !== DONE_KEY) t.status = DONE_KEY;
+  if (!t.done && t.status === DONE_KEY) t.status = prevOfDone();
+
+  closeModal(); markDirty(); renderAll();
+  toast('Task updated — not written to the ledger until you click Save');
+}
+/* Board back to backlog. A ticket carries a section, dates, criteria and an
+   activity log; a backlog item carries none of those. Throwing them away on the
+   way out would mean a demote-then-promote round trip quietly destroys the
+   audit trail, which is the same class of loss as the 2026-07-20 ledger
+   rebuild. The whole ticket is parked on the item instead and restored if it
+   comes back. */
+function demoteBox(){ return document.getElementById('demoteBox'); }
+function clearDemote(){ const el = demoteBox(); if (el) { el.className = 'confirm'; el.innerHTML = ''; } }
+
+function startDemote(){
+  if (locked()) return;
+  const t = state.tasks.find(x => x.id === openId);
+  if (!t) return;
+  if (isLastTask()) {
+    const el = demoteBox();
+    el.className = 'confirm bad';
+    el.innerHTML = '<b>' + esc(t.key) + ' is the only task on the board.</b>' + esc(LAST_TASK_MSG)
+      + '<div class="row"><button class="btn" onclick="clearDemote()">OK</button></div>';
+    return;
+  }
+
+  /* An epic is a container. Demoting one with tickets still inside would strip
+     their epic tag on the next load, silently. Empty it first. */
+  if (t.epic) {
+    const kids = childrenOf(t.key);
+    if (kids.length) {
+      const el = demoteBox();
+      el.className = 'confirm bad';
+      el.innerHTML = '<b>' + esc(t.key) + ' still has ' + kids.length + ' ticket(s) in it.</b>'
+        + 'Move them out of this epic first. Sending it back now would drop the epic tag off every one of them.'
+        + '<div class="row"><button class="btn" onclick="clearDemote()">OK</button></div>';
+      return;
+    }
+  }
+
+  const warn = t.done ? 'This ticket is done (' + esc(t.done) + '). Sending it back removes it from the done count, '
+                      + 'so burndown, velocity and completed pace all drop.'
+             : 'It stops counting as open work, so required pace falls.';
+  const el = demoteBox();
+  el.className = 'confirm ' + (t.done ? 'bad' : 'warn');
+  el.innerHTML = '<b>Send ' + esc(t.key) + ' back to the backlog?</b>'
+    + warn + ' Its section, dates, criteria and activity log are parked with it and come back if you promote it again.'
+    + '<div class="row"><button class="btn primary" onclick="confirmDemote()">Send to backlog</button>'
+    + '<button class="btn" onclick="clearDemote()">Cancel</button></div>';
+}
+
+function confirmDemote(){
+  if (locked()) return;
+  const t = state.tasks.find(x => x.id === openId);
+  if (!t) { clearDemote(); return; }
+  if (t.epic && childrenOf(t.key).length) return;      // guarded above, held here too
+  if (isLastTask()) return;                             // guarded above, held here too
+
+  logEntry(t, { from: labelOf(colOf(t.status)), to: 'Backlog', note: 'Sent back to the backlog.', fail: false });
+  const item = { key: t.key, text: t.title };
+  if (t.description) item.note = t.description;
+  // Everything the backlog shape cannot hold, kept verbatim for the return trip.
+  item.parked = JSON.parse(JSON.stringify(t));
+
+  state.backlog.unshift(item);                          // newest decision at the top of the ranking
+  state.tasks = state.tasks.filter(x => x.id !== t.id);
+  clearDemote();
+  closeModal();
+  markDirty(); renderAll();
+  toast(t.key + ' is back in the backlog, at the top. Required pace is now '
+        + stats().required.toFixed(1) + '/wk.', 'good', 6000);
+}
+
+/* The ledger refuses an empty task list, so the board keeps at least one task.
+   Removing the last one would only produce a SAVE FAILED after the fact. */
+const LAST_TASK_MSG = 'The board keeps at least one task. Add another task first, then remove this one.';
+function isLastTask(){ return state.tasks.length <= 1; }
+
+function deleteTask(){
+  if (locked()) return;
+  const t = state.tasks.find(x => x.id === openId);
+  if (!t) return;
+  if (isLastTask()) { toast(LAST_TASK_MSG, 'bad', 6000); return; }
+  if (!confirm('Delete "' + t.title + '"? Ideas belong in the backlog, not deleted.')) return;
+  state.tasks = state.tasks.filter(x => x.id !== openId);
+  closeModal(); markDirty(); renderAll();
+}
+function closeModal(){
+  openId = null;
+  document.getElementById('scrim').classList.remove('open');
+  document.getElementById('modal').classList.remove('open');
+}
+function newTask(){
+  if (locked()) return;
+  const base = fmtD(today());
+  const id = 'task-' + Date.now().toString(36);
+  state.tasks.push({ id, key:mintKey(), title:'New task', section:state.sections[0], start:base, due:base,
+                     done:null, status:DEFAULT_STATUS, milestone:false, epic:false, epicKey:null,
+                     description:'', acceptanceCriteria:[] });
+  markDirty(); renderAll(); openTask(id);
+  const el = document.getElementById('mTitle');
+  if (el) { el.focus(); el.select(); }
+}
+/* Backlog to board. A backlog entry is a bare string; a ticket needs a key, a
+   section, a start and a due date, or the server refuses the save. Nothing here
+   is invented on your behalf — the section and the due date are asked for, and
+   the original wording is kept in the description rather than clipped away. */
+let pendingPromote = null;
+
+function startPromote(i){
+  if (locked()) return;
+  if (!state.sections.length) { toast('Add a section to the plan first.', 'bad'); return; }
+  pendingPromote = i;
+  renderLists();
+}
+function cancelPromote(){ pendingPromote = null; renderLists(); }
+
+function confirmPromote(i){
+  if (locked()) return;
+  const item = state.backlog[i];
+  if (!item) { cancelPromote(); return; }
+  const text = item.text;
+  const secEl = document.getElementById('promoSec'), dueEl = document.getElementById('promoDue');
+  const section = secEl && secEl.value ? secEl.value : '';
+  const start = fmtD(today());
+  const due = dueEl && dueEl.value ? dueEl.value : '';
+  if (state.sections.indexOf(section) === -1) { toast('Pick a section.', 'bad'); return; }
+  if (!due) { toast('Give it a due date. The ledger will not take a ticket without one.', 'bad'); return; }
+  if (due < start) { toast('That due date is before today. Pick a later one.', 'bad'); return; }
+
+  const id = 'task-' + Date.now().toString(36);
+  /* Keeps its backlog number. The whole point of numbering the backlog is that
+     the idea and the ticket it becomes are the same thing to talk about. */
+  let t;
+  if (item.parked) {
+    /* Came off the board once. Give back what it had rather than making a new
+       ticket that happens to share a number: criteria, activity log, epic link
+       and type all return. The section and the date are whatever you just
+       chose, and it re-enters through the intake column like anything else. */
+    t = JSON.parse(JSON.stringify(item.parked));
+    t.id = id; t.key = item.key; t.title = clip(text, 60);
+    t.section = section; t.start = start; t.due = due;
+    t.done = null; t.status = INTAKE_KEY;
+    if (!Array.isArray(t.acceptanceCriteria)) t.acceptanceCriteria = [];
+    if (!Array.isArray(t.history)) t.history = [];
+    // A verified ticket that went back to the backlog is unproven again.
+    t.acceptanceCriteria.forEach(a => a.done = false);
+  } else {
+    t = { id, key: item.key, title: clip(text, 60), section, start, due, done: null,
+          status: INTAKE_KEY, milestone: false, epic: false, epicKey: null,
+          description: 'Promoted from the backlog on ' + start + '.\n\nOriginal backlog entry:\n' + text
+                       + (item.note ? '\n\n' + item.note : ''),
+          acceptanceCriteria: [], history: [] };
+  }
+  logEntry(t, { from: 'Backlog', to: labelOf(INTAKE_KEY), note: 'Promoted from the backlog.', fail: false });
+  state.tasks.push(t);
+  state.backlog.splice(i, 1);
+  pendingPromote = null;
+
+  markDirty(); renderAll();
+  /* Say the pace part out loud. Promoting is not filing — it adds open work to
+     a plan with no buffer, and the required-pace number moves immediately. */
+  toast(t.key + ' is on the board in ' + labelOf(INTAKE_KEY) + '. Required pace is now '
+        + stats().required.toFixed(1) + '/wk.', 'good', 6000);
+  openTask(id);
+  return t;
+}
+
+/* Reordering the backlog is ranking it. The order is stored, so the top of the
+   list is the next thing worth pulling onto the board. */
+let blDragFrom = null;
+
+function moveBacklog(i, dir){
+  if (locked()) return;
+  const j = i + dir;
+  if (j < 0 || j >= state.backlog.length) return;
+  state.backlog.splice(j, 0, state.backlog.splice(i, 1)[0]);
+  if (pendingPromote === i) pendingPromote = j;
+  else if (pendingPromote === j) pendingPromote = i;
+  markDirty(); renderLists();
+}
+function blDragStart(e){
+  if (locked()) { e.preventDefault(); return; }
+  blDragFrom = Number(e.currentTarget.dataset.i);
+  e.currentTarget.classList.add('dragging');
+  if (e.dataTransfer) { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(blDragFrom)); }
+}
+function blDragEnd(e){
+  e.currentTarget.classList.remove('dragging');
+  clearBlHints();
+}
+function clearBlHints(){
+  const list = document.getElementById('backlogList');
+  if (list && list.querySelectorAll) {
+    Array.prototype.forEach.call(list.querySelectorAll('li'), li => li.classList.remove('over'));
+  }
+}
+function blDragOver(e){
+  e.preventDefault();
+  if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.classList.add('over');
+}
+function blDragLeave(e){ e.currentTarget.classList.remove('over'); }
+function blDrop(e){
+  e.preventDefault();
+  clearBlHints();
+  if (locked()) return;
+  const from = blDragFrom !== null ? blDragFrom
+             : (e.dataTransfer ? Number(e.dataTransfer.getData('text/plain')) : NaN);
+  const to = Number(e.currentTarget.dataset.i);
+  blDragFrom = null;
+  if (!Number.isInteger(from) || !Number.isInteger(to) || from === to) return;
+  if (from < 0 || from >= state.backlog.length || to < 0 || to >= state.backlog.length) return;
+  state.backlog.splice(to, 0, state.backlog.splice(from, 1)[0]);
+  pendingPromote = null;                     // indexes just moved under the form
+  markDirty();
+  // Out of the drop handler, same as the board: tearing down the dragged node
+  // mid-drag is a known way to lose the update.
+  setTimeout(renderLists, 0);
+}
+
+/* Backlog items are edited in their own panel rather than the ticket modal.
+   They have no section, dates or status, and a modal full of disabled fields
+   would read as broken. Keyed by BM- number, not index, so a reorder or a
+   deletion underneath cannot point the panel at the wrong item. */
+let blOpenKey = null;
+
+function backlogByKey(k){ return state.backlog.find(b => b && b.key === k) || null; }
+function backlogIndex(k){ return state.backlog.findIndex(b => b && b.key === k); }
+
+function openBacklogItem(key){
+  const b = backlogByKey(key);
+  if (!b) return;
+  blOpenKey = key;
+  document.getElementById('blId').textContent = b.key + '  ·  backlog, not scheduled';
+  document.getElementById('blText').value = b.text || '';
+  document.getElementById('blNote').value = b.note || '';
+  document.getElementById('scrim').classList.add('open');
+  document.getElementById('blModal').classList.add('open');
+  const el = document.getElementById('blText');
+  if (el && el.focus) el.focus();
+}
+function closeBacklogItem(){
+  blOpenKey = null;
+  document.getElementById('scrim').classList.remove('open');
+  document.getElementById('blModal').classList.remove('open');
+}
+/* One scrim, two panels. Close whichever is open rather than assuming. */
+function closeAnyPanel(){
+  if (blOpenKey) closeBacklogItem();
+  else closeModal();
+}
+function applyBacklogItem(){
+  if (locked()) return;
+  const b = backlogByKey(blOpenKey);
+  if (!b) { closeBacklogItem(); return; }
+  const text = document.getElementById('blText').value.trim();
+  // The server refuses an item with no text, so refuse it here where it can be fixed.
+  if (!text) { toast('An item needs some text. Delete it instead if it is dead.', 'bad'); return; }
+  b.text = text;                              // b.parked is left alone, so a demoted ticket survives an edit
+  const note = document.getElementById('blNote').value.trim();
+  if (note) b.note = note; else delete b.note;
+  closeBacklogItem();
+  markDirty(); renderLists();
+  toast(b.key + ' saved.', 'good');
+}
+function deleteBacklogItem(){
+  if (locked()) return;
+  const i = backlogIndex(blOpenKey);
+  if (i === -1) { closeBacklogItem(); return; }
+  const key = state.backlog[i].key;
+  state.backlog.splice(i, 1);
+  if (pendingPromote === i) pendingPromote = null;
+  closeBacklogItem();
+  markDirty(); renderLists();
+  toast(key + ' deleted from the backlog.');
+}
+/* Hands off to the promote row rather than duplicating it. That row is what
+   asks for the section and the due date, and it is the tested path. */
+function promoteFromPanel(){
+  if (locked()) return;
+  const b = backlogByKey(blOpenKey);
+  if (!b) { closeBacklogItem(); return; }
+  const text = document.getElementById('blText').value.trim();
+  if (text && text !== b.text) b.text = text;              // do not lose an unsaved rename
+  const note = document.getElementById('blNote').value.trim();
+  if (note) b.note = note; else delete b.note;
+  const i = backlogIndex(b.key);
+  closeBacklogItem();
+  markDirty();
+  showPage('backlog');
+  startPromote(i);
+}
+
+function addBacklog(){
+  if (locked()) return;
+  const el = document.getElementById('bName'), v = el.value.trim();
+  if (!v) return;
+  state.backlog.push({ key: mintKey(), text: v }); el.value = '';
+  markDirty(); renderLists();
+}
+function delBacklog(i){
+  if (locked()) return;
+  const gone = state.backlog[i];
+  state.backlog.splice(i,1);
+  if (gone && blOpenKey === gone.key) closeBacklogItem();
+  if (pendingPromote === i) pendingPromote = null;
+  markDirty(); renderLists();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (blOpenKey) closeBacklogItem();
+  else if (openId) closeModal();
+});
+
+// Last line of defence. Unsaved status changes are easy to lose by closing a tab.
+window.addEventListener('beforeunload', e => {
+  if (!dirty) return;
+  e.preventDefault();
+  e.returnValue = '';
+});
+
+window.addEventListener('beforeunload', function(e){
+  if (dirty) { e.preventDefault(); e.returnValue = ''; return ''; }
+});
+
+
+/* ---------- settings ---------- */
+/* Column keys are permanent. Everything here edits labels, colours, order and
+   membership, so no edit on this page can orphan a ticket or rewrite history.
+   Removing a column is the one destructive act, and it makes you move the
+   tickets first — the server refuses the save otherwise. */
+let pendingRemove = null, pendingDone = null;
+
+function colCounts(){
+  const c = {};
+  state.tasks.forEach(t => { const k = colOf(t.status); c[k] = (c[k] || 0) + 1; });
+  return c;
+}
+function slugKey(label){
+  let base = String(label).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  if (!base) base = 'column';
+  const used = new Set(COLUMNS.map(c => c.key));
+  let key = base, n = 2;
+  while (used.has(key)) { key = base + '-' + n; n++; }
+  return key;
+}
+function roleTags(key){
+  const s = state.settings;
+  let h = '';
+  if (key === s.doneKey) h += '<span class="tag done">Done</span>';
+  if (key === s.defaultKey) h += '<span class="tag">Start</span>';
+  if (key === s.intakeKey) h += '<span class="tag">Backlog lands</span>';
+  if (key === s.failFrom) h += '<span class="tag">Fail from</span>';
+  if (key === s.failTo) h += '<span class="tag">Fail to</span>';
+  return h;
+}
+
+function renderSettings(){
+  if (!state) return;
+  const s = state.settings, counts = colCounts(), el = document.getElementById('colEditor');
+  if (!el) return;
+  let head = '';
+  if (pendingDone) {
+    const oldN = state.tasks.filter(t => colOf(t.status) === s.doneKey).length;
+    const newN = state.tasks.filter(t => colOf(t.status) === pendingDone).length;
+    head = '<div class="colrow warn"><div class="msg">'
+      + '<b>Move the Done role to ' + esc(labelOf(pendingDone)) + '?</b><br>'
+      + oldN + ' ticket(s) now in ' + esc(labelOf(s.doneKey)) + ' move with their done dates. '
+      + newN + ' ticket(s) already in ' + esc(labelOf(pendingDone)) + ' get stamped done today. '
+      + 'Burndown, velocity and pace all recount.'
+      + '</div>'
+      + '<button class="btn primary" onclick="confirmDone()">Move the Done role</button>'
+      + '<button class="btn" onclick="cancelDone()">Cancel</button></div>';
+  }
+  el.innerHTML = head + s.columns.map((c, i) => {
+    const n = counts[c.key] || 0;
+    if (pendingRemove === c.key) {
+      const others = s.columns.filter(o => o.key !== c.key);
+      return '<div class="colrow warn">'
+        + '<div class="msg"><b>Remove ' + esc(c.label) + '?</b> '
+        + (n ? n + ' ticket' + (n === 1 ? '' : 's') + ' sit' + (n === 1 ? 's' : '') + ' in it and must move somewhere first.'
+             : 'It is empty, so nothing moves.') + '</div>'
+        + (n ? '<select id="reassignTo">' + others.map(o =>
+              '<option value="' + esc(o.key) + '">Move to ' + esc(o.label) + '</option>').join('') + '</select>' : '')
+        + '<button class="btn danger" onclick="confirmRemove(\'' + esc(c.key) + '\')">'
+        + (n ? 'Move ' + n + ' and remove' : 'Remove') + '</button>'
+        + '<button class="btn" onclick="cancelRemove()">Cancel</button>'
+        + '</div>';
+    }
+    return '<div class="colrow">'
+      + '<div class="ord">'
+      +   '<button class="mini" onclick="moveColumn(' + i + ',-1)" title="Move left"' + (i === 0 ? ' disabled' : '') + '>&#8593;</button>'
+      +   '<button class="mini" onclick="moveColumn(' + i + ',1)" title="Move right"' + (i === s.columns.length-1 ? ' disabled' : '') + '>&#8595;</button>'
+      + '</div>'
+      + '<input type="color" value="' + esc(c.dot) + '" title="Column colour" onchange="setColumnDot(' + i + ',this.value)">'
+      + '<input class="collabel" value="' + esc(c.label) + '" maxlength="30" aria-label="Column name"'
+      +   ' oninput="setColumnLabel(' + i + ',this.value)">'
+      + roleTags(c.key)
+      + '<span class="ac" title="Tickets in this column">' + n + '</span>'
+      + '<button class="btn danger" onclick="startRemove(\'' + esc(c.key) + '\')"'
+      +   (s.columns.length <= 2 ? ' disabled title="A board needs at least two columns"'
+          : c.key === s.doneKey ? ' disabled title="Move the Done role to another column first"' : '') + '>Remove</button>'
+      + '</div>';
+  }).join('');
+  fillRoleSelects();
+}
+
+function fillRoleSelects(){
+  const s = state.settings;
+  const opts = sel => COLUMNS.map(c =>
+    '<option value="' + esc(c.key) + '"' + (c.key === sel ? ' selected' : '') + '>' + esc(c.label) + '</option>').join('');
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
+  set('setDefault', opts(s.defaultKey));
+  set('setDone', opts(s.doneKey));
+  set('setIntake', opts(s.intakeKey));
+  const off = k => '<option value=""' + (s[k] ? '' : ' selected') + '>Off</option>';
+  set('setFailFrom', off('failFrom') + opts(s.failFrom));
+  set('setFailTo', off('failTo') + opts(s.failTo));
+  const cap = document.getElementById('setDoneCap');
+  if (cap) cap.value = s.doneCap;
+  fillBoardIdentity();
+}
+
+function fillBoardIdentity(){
+  const v = (id, val) => { const el = document.getElementById(id); if (el) el.value = val == null ? '' : val; };
+  v('sName', state.project);
+  v('sGoal', state.goal);
+  v('sStart', state.created);
+  v('sTarget', state.targetDate);
+  v('sPrefix', state.keyPrefix);
+  v('sSections', (state.sections || []).join('\n'));
+  v('sRules', (state.rules || []).join('\n'));
+}
+
+/* Board identity, sections and rules. Sections are validated hard because a
+   ticket pointing at a section that no longer exists is exactly what the
+   server rejects on save, and a rejected save looks like data loss. */
+function saveBoardIdentity(){
+  if (locked()) return;
+  const val = id => (document.getElementById(id).value || '').trim();
+  const lines = id => document.getElementById(id).value.split('\n').map(x => x.trim()).filter(Boolean);
+  const name = val('sName'), created = val('sStart'), target = val('sTarget');
+  const secs = lines('sSections');
+
+  if (!name) { toast('The board needs a name.', 'bad'); return; }
+  if (!secs.length) { toast('Keep at least one section.', 'bad'); return; }
+  if (!created || !target) { toast('Both dates are required — the charts measure between them.', 'bad'); return; }
+  if (parseD(target) <= parseD(created)) { toast('The target date has to come after the start date.', 'bad'); return; }
+
+  const kept = new Set(secs);
+  const orphans = state.tasks.filter(t => !kept.has(t.section));
+  if (orphans.length && !confirm(orphans.length + ' ticket' + (orphans.length > 1 ? 's are' : ' is')
+      + ' in a section you removed. Move ' + (orphans.length > 1 ? 'them' : 'it') + ' to "' + secs[0] + '"?')) return;
+  orphans.forEach(t => { t.section = secs[0]; });
+
+  state.project    = name;
+  state.goal       = val('sGoal');
+  state.created    = created;
+  state.targetDate = target;
+  state.keyPrefix  = val('sPrefix').toUpperCase().replace(/[^A-Z0-9]/g, '') || state.keyPrefix || 'PRJ';
+  state.sections   = secs;
+  state.rules      = lines('sRules');
+
+  normalise(); markDirty(); renderAll();
+  toast('Board updated.', 'ok');
+}
+
+function clearBoard(){
+  if (locked()) return;
+  const n = state.tasks.length + (state.backlog || []).length;
+  if (n && !confirm('This deletes all ' + n + ' items on the board and cannot be undone.\n\n'
+      + 'Export a copy first if you want to keep this. Clear the board?')) return;
+  const name = (prompt('Name your board', state.project || 'My Project') || '').trim().slice(0, 60);
+  if (!name) return;
+  /* One starter task, not an empty list: the ledger refuses to write zero tasks
+     (a guard against accidental wipes), so an empty board could never save.
+     Settings stay as they are: clearing empties the board, not your columns. */
+  const fresh = makeStarterPlan(name);
+  ['project','goal','created','targetDate','keyPrefix','nextKeyNum','sections','rules','backlog','tasks']
+    .forEach(k => { state[k] = fresh[k]; });
+  normalise(); markDirty(); renderAll();
+  toast('Board cleared. Edit the starter task to begin.', 'ok');
+}
+
+/* Changing the cap re-renders. It does not touch a single ticket, so there is
+   no confirm and no warning copy — there is nothing to undo. */
+function setDoneCap(val){
+  if (locked()) return;
+  let n = parseInt(val, 10);
+  if (!isFinite(n) || n < 0) n = LEGACY_SETTINGS.doneCap;
+  state.settings.doneCap = Math.min(n, DONE_CAP_MAX);
+  showAllDone = false;
+  settingsChanged(false);
+  toast('Done column shows the newest ' + (state.settings.doneCap || 'unlimited')
+        + '. No tickets were removed.');
+}
+
+/* Every settings mutation lands here: persist, then rebuild everything that
+   reads a column. The board is redrawn too, because a rename or a reorder
+   changes it immediately and a stale board is how the old drift started. */
+function settingsChanged(reRenderEditor){
+  applySettings();
+  markDirty();
+  renderBoard(); renderStats();
+  if (reRenderEditor) renderSettings(); else fillRoleSelects();
+}
+
+function setColumnLabel(i, val){
+  if (locked()) return;
+  const c = state.settings.columns[i];
+  if (!c) return;
+  c.label = String(val).slice(0, 30);
+  // Deliberately does NOT redraw the editor — that would steal focus mid-word.
+  settingsChanged(false);
+}
+function setColumnDot(i, val){
+  if (locked()) return;
+  const c = state.settings.columns[i];
+  if (!c || !/^#[0-9a-fA-F]{6}$/.test(val)) return;
+  c.dot = val;
+  settingsChanged(true);
+}
+function moveColumn(i, dir){
+  if (locked()) return;
+  const cols = state.settings.columns, j = i + dir;
+  if (j < 0 || j >= cols.length) return;
+  cols.splice(j, 0, cols.splice(i, 1)[0]);
+  /* Order is not cosmetic. colIdx() reads it to decide whether a move is
+     backward, which is what forces a written reason. */
+  settingsChanged(true);
+  toast('Column order changed. Backward moves are judged by the new order.');
+}
+function addColumn(){
+  if (locked()) return;
+  const input = document.getElementById('newCol');
+  const label = input.value.trim();
+  if (!label) { toast('Give the column a name first.', 'bad'); return; }
+  if (COLUMNS.length >= MAX_COLUMNS) { toast('Twelve columns is the cap.', 'bad'); return; }
+  state.settings.columns.push({ key: slugKey(label), label: label.slice(0, 30), dot: '#9A9A98' });
+  input.value = '';
+  settingsChanged(true);
+  toast('Added ' + label + '.', 'good');
+}
+function startRemove(key){
+  if (locked()) return;
+  if (state.settings.columns.length <= 2) return;
+  if (key === state.settings.doneKey) { toast(doneGuard(), 'bad', 6000); return; }
+  pendingRemove = key;
+  renderSettings();
+}
+/* Removing the done column is two decisions wearing one button: where the
+   tickets go, and what "done" means afterwards. Done dates were being cleared
+   on the way out and the role handed to the destination, which left verified
+   tickets sitting in the done column with no done date — a save the server
+   refuses. Make the user move the role first, so each decision is confirmed. */
+function doneGuard(){
+  return 'Move the Done role to another column first. Removing the column that means done would strip the done dates off every verified ticket.';
+}
+function cancelRemove(){ pendingRemove = null; renderSettings(); }
+
+function confirmRemove(key){
+  if (locked()) return;
+  const s = state.settings;
+  if (s.columns.length <= 2) return;
+  if (key === s.doneKey) { pendingRemove = null; renderSettings(); toast(doneGuard(), 'bad', 6000); return; }
+  const moving = state.tasks.filter(t => colOf(t.status) === key);
+  const pick = document.getElementById('reassignTo');
+  const to = moving.length ? (pick && pick.value) : null;
+  if (moving.length && !to) { toast('Pick where those tickets go.', 'bad'); return; }
+
+  const gone = COLUMNS.find(c => c.key === key);
+  const dest = to ? COLUMNS.find(c => c.key === to) : null;
+  /* Reassign through the ledger, not by hand: moving into the done column has
+     to stamp a done date, and moving out of it has to clear one. Writing
+     t.status directly here would produce exactly the done-date mismatch the
+     server rejects. Each move is logged, so the audit trail says why. */
+  moving.forEach(t => {
+    const from = labelOf(colOf(t.status));
+    t.status = dest.key;
+    if (dest.key === DONE_KEY) { if (!t.done) t.done = fmtD(today()); }
+    else if (t.done) t.done = null;
+    logEntry(t, { from, to: dest.label, note: 'Column "' + gone.label + '" was removed from the board.', fail: false });
+  });
+
+  s.columns = s.columns.filter(c => c.key !== key);
+  if (s.defaultKey === key) s.defaultKey = dest ? dest.key : s.columns[0].key;
+  if (s.intakeKey === key) s.intakeKey = dest ? dest.key : s.columns[0].key;
+  pendingRemove = null;
+  settingsChanged(true);
+  toast('Removed ' + gone.label + (moving.length ? ', moved ' + moving.length + ' ticket(s) to ' + dest.label : ''), 'good', 5000);
+}
+
+function setRole(role, val){
+  if (locked()) return;
+  const s = state.settings;
+  if ((role === 'doneKey' || role === 'defaultKey' || role === 'intakeKey') && !val) { fillRoleSelects(); return; }
+
+  /* The done column is not a label. Tickets in the old one carry done dates and
+     ticked criteria; tickets in the new one do not, and burndown, velocity and
+     pace all recount. Confirm inline, in the page, rather than in a native
+     dialog that no test can drive and no touch user expects. */
+  if (role === 'doneKey' && val !== s.doneKey) { pendingDone = val; renderSettings(); return; }
+
+  s[role] = val || null;
+  settingsChanged(true);
+}
+
+function cancelDone(){ pendingDone = null; renderSettings(); }
+function confirmDone(){
+  if (locked()) return;
+  const s = state.settings, val = pendingDone;
+  if (!val || !COLUMNS.some(c => c.key === val)) { pendingDone = null; renderSettings(); return; }
+  const oldDone = s.doneKey;
+  const label = labelOf(val);
+  state.tasks.forEach(t => {
+    const k = colOf(t.status);
+    if (k === oldDone) t.status = val;                       // carries its done date across
+    else if (k === val && !t.done) t.done = fmtD(today());   // now in the done column, so stamp it
+  });
+  s.doneKey = val;
+  pendingDone = null;
+  settingsChanged(true);
+  toast('Done column is now ' + label + '. Pace and burndown recounted.', 'good', 5000);
+}
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.dataset.page === p));
+  document.getElementById('page-' + p).classList.add('active');
+  if (p === 'charts') renderCharts();
+  if (p === 'settings') renderSettings();
+}
+
+/* ---------- timeline ----------
+   Deliberately not a Chart.js chart. Horizontal bars divided a fixed-height box
+   by 76 rows, which is 8px a row under a 9px font, and gave no click target and
+   nowhere to draw slip. This is plain DOM: constant row height, real anchors,
+   and the panel scrolls.
+
+   Reads state.tasks only. It never filters what any other chart counts. */
+let ganttShowDone = false;   // session-only, matches the board's done-cap toggle
+function toggleGanttDone(){ ganttShowDone = !ganttShowDone; renderGantt(); }
+
+/* Velocity and workload only. Burndown ignores this on purpose. All three view
+   toggles in this dashboard are session-only and never reach the ledger. */
+let showAllWeeks = false;
+function toggleWeeks(){ showAllWeeks = !showAllWeeks; renderCharts(); }
+
+function renderGantt(){
+  const el = document.getElementById('gantt');
+  if (!el || !state) return;
+  const btn = document.getElementById('ganttToggle');
+  if (btn) btn.textContent = ganttShowDone ? 'Hide completed' : 'Show completed';
+
+  const now = today();
+  /* Milestones leave the rows and become vertical markers. A milestone is a
+     date, not a duration; the old chart faked a 1-day bar for each one. */
+  const miles = state.tasks.filter(t => t.milestone);
+  const rows = state.tasks.filter(t => !t.milestone && (ganttShowDone || !t.done));
+
+  if (!rows.length) {
+    el.innerHTML = '<div class="g-empty">Nothing open. '
+      + (ganttShowDone ? '' : 'Completed work is hidden — use Show completed.') + '</div>';
+    return;
+  }
+
+  /* Axis fits what is actually on screen, so hiding 52 done tickets tightens
+     the scale instead of leaving two thirds of it empty. Today and the target
+     are always in frame because they are the two things you read against. */
+  let lo = Math.min(...rows.map(t => parseD(t.start).getTime()), now.getTime());
+  let hi = Math.max(...rows.map(t => parseD(t.due).getTime()), now.getTime(),
+                    parseD(state.targetDate).getTime(),
+                    ...miles.map(t => parseD(t.due).getTime()));
+  const pad = 2*DAY;
+  lo -= pad; hi += pad;
+  const span = Math.max(1, hi - lo);
+  const pct = ms => ((ms - lo)/span)*100;
+  const at = s => pct(parseD(s).getTime());
+
+  // Week ticks, thinned so labels never collide on a narrow panel.
+  let ticks = [], cur = new Date(lo);
+  cur.setHours(0,0,0,0);
+  cur.setDate(cur.getDate() - ((cur.getDay()+6)%7));   // back to Monday
+  const weeks = Math.ceil(span/(7*DAY));
+  const every = weeks > 16 ? 2 : 1;
+  for (let i = 0; cur.getTime() <= hi; i++) {
+    if (cur.getTime() >= lo && i % every === 0) ticks.push(new Date(cur));
+    cur = new Date(cur.getTime() + 7*DAY);
+  }
+
+  let h = '<div class="g-scale"><div class="sp"></div><div class="g-ticks">'
+    + ticks.map(d => '<div class="g-tick" style="left:' + pct(d.getTime()).toFixed(3) + '%">'
+        + (d.getMonth()+1) + '/' + d.getDate() + '</div>').join('')
+    + '</div></div>';
+
+  const overlays = '<div class="g-today" style="left:' + pct(now.getTime()).toFixed(3) + '%" title="Today"></div>'
+    + miles.map(m => '<div class="g-ms' + (m.done ? ' hit' : '') + '" style="left:' + at(m.due).toFixed(3) + '%">'
+        + '<span class="lbl">◆ ' + esc(clip(m.title.replace(/^MILESTONE:\s*/,''), 22)) + '</span></div>').join('');
+
+  // Plan order, not start-date order, so sections stop interleaving.
+  const secOrder = state.sections || [];
+  const bySec = new Map();
+  rows.forEach(t => {
+    const k = secOrder.indexOf(t.section) === -1 ? (secOrder.length ? secOrder[0] : t.section) : t.section;
+    if (!bySec.has(k)) bySec.set(k, []);
+    bySec.get(k).push(t);
+  });
+
+  secOrder.concat([...bySec.keys()].filter(k => secOrder.indexOf(k) === -1)).forEach(sec => {
+    const list = bySec.get(sec);
+    if (!list || !list.length) return;
+    const late = list.filter(t => !t.done && parseD(t.due) < now).length;
+    h += '<div class="g-sec">' + esc(sec) + ' · ' + list.length
+       + (late ? ' · ' + late + ' late' : '') + '</div>';
+
+    list.sort((a,b) => (a.due < b.due ? -1 : a.due > b.due ? 1 : a.start < b.start ? -1 : 1));
+    list.forEach(t => {
+      const s = at(t.start), e = at(t.due);
+      const isLate = !t.done && parseD(t.due) < now;
+      const cls = t.done ? 'doneb' : isLate ? 'late' : t.status === 'not-started' ? 'notstarted' : 'run';
+      const w = Math.max(0.4, e - s);
+      let bars = '<div class="g-bar ' + cls + '" style="left:' + s.toFixed(3) + '%;width:' + w.toFixed(3) + '%"></div>';
+      if (isLate) {
+        const lateBy = daysBetween(parseD(t.due), now);
+        const sw = Math.max(0.4, pct(now.getTime()) - e);
+        bars += '<div class="g-slip" style="left:' + e.toFixed(3) + '%;width:' + sw.toFixed(3) + '%">'
+             +  '<span class="d">' + lateBy + 'd</span></div>';
+      }
+      h += '<div class="g-row" onclick="openTask(\'' + esc(t.id) + '\')"'
+        + ' title="' + esc(t.key + ' — ' + t.title + '  ·  ' + t.start + ' → ' + t.due
+            + (t.done ? '  ·  done ' + t.done : '')) + '">'
+        + '<div class="g-lab"><span class="k">' + esc(t.key || t.id) + '</span>'
+        +   '<span class="n">' + (t.epic ? '▤ ' : '') + esc(t.title) + '</span></div>'
+        + '<div class="g-track">' + bars + '</div></div>';
+    });
+  });
+
+  el.innerHTML = h;
+  /* The today line and the milestone markers span every row, so they are drawn
+     once over the track column rather than repeated per row. Height is taken
+     from scrollHeight, not bottom:0 — inside a scrolling box bottom:0 resolves
+     to the visible height, which would cut the lines off at the fold. */
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:absolute;left:var(--labw);right:0;top:26px;pointer-events:none;z-index:1';
+  ov.style.height = Math.max(0, el.scrollHeight - 26) + 'px';
+  ov.innerHTML = overlays;
+  el.appendChild(ov);
+}
+
+/* ---------- charts ---------- */
+function destroyCharts(){ Object.values(charts).forEach(c => { try{ c.destroy(); }catch(e){} }); charts = {}; }
+function renderCharts(){
+  if (!state || !document.getElementById('page-charts').classList.contains('active')) return;
+  destroyCharts();
+  const weeks = weekStarts();
+  const weekLabels = weeks.map(w => (w.getMonth()+1) + '/' + w.getDate());
+
+  /* Burndown keeps every week. Its Ideal line is defined as total down to zero
+     across the WHOLE project, so clipping the window would leave a fragment of
+     a line whose meaning depends on both endpoints. Thin the tick LABELS
+     instead: half the labels, all of the data. */
+  const labelEvery = weeks.length > 10 ? 2 : 1;
+  const thinned = (w,i) => (i % labelEvery === 0 || i === weeks.length-1) ? weekLabels[i] : '';
+
+  /* Velocity and workload are per-week bars with no endpoint dependency, so a
+     rolling window is safe and drops the dead weeks at each end. Anchored on
+     today, not on the plan, so it stays useful as the project moves. */
+  // 5 back + the current week + 4 forward = 10 columns, the agreed ceiling.
+  const BACK = 5, FWD = 4;
+  const tIdx = Math.max(0, weeks.findIndex(w => w > today()) - 1);
+  const wLo = Math.max(0, tIdx - BACK);
+  const wHi = Math.min(weeks.length, tIdx + FWD + 1);
+  const windowed = !showAllWeeks && weeks.length > (BACK + FWD + 1);
+  const wk = windowed ? weeks.slice(wLo, wHi) : weeks;
+  const wkLabels = windowed ? weekLabels.slice(wLo, wHi) : weekLabels;
+  const wkBtn = document.getElementById('weeksToggle');
+  if (wkBtn) {
+    wkBtn.textContent = showAllWeeks ? 'Last 10 weeks' : 'Whole project';
+    wkBtn.style.display = weeks.length > (BACK + FWD + 1) ? '' : 'none';
+  }
+  // p0/off/offToLabel removed 2026-08-31: they existed only for the canvas
+  // Gantt, which is now renderGantt() and works in real dates, not day offsets.
+  const baseOpts = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ labels:{ font:{family:'Ubuntu'} } } } };
+  const plan = planTasks();
+
+  renderGantt();
+
+  const total = plan.length;
+  charts.burn = new Chart(document.getElementById('burndown'), {
+    type:'line',
+    data:{ labels:weeks.map(thinned), datasets:[
+      { label:'Ideal', data:weeks.map((w,i) => Math.max(0, total - total*(i/Math.max(1,weeks.length-1)))), borderColor:'#B8B7B5', borderDash:[6,4], pointRadius:0, tension:0 },
+      { label:'Actual', data:weeks.map(w => w > today() ? null : total - plan.filter(t => t.done && parseD(t.done) < new Date(w.getTime()+7*DAY)).length),
+        borderColor:'#FF8200', backgroundColor:'#FF8200', pointRadius:3, tension:0, spanGaps:false }]},
+    options:{ ...baseOpts,
+      // The label is blanked, not the point, so the tooltip still names the week.
+      plugins:{ ...baseOpts.plugins, tooltip:{ callbacks:{ title: c => weekLabels[c[0].dataIndex] } } },
+      scales:{ y:{ min:0, ticks:{stepSize:2,font:{family:'Ubuntu',size:12}} },
+               x:{ ticks:{font:{family:'Ubuntu',size:12},autoSkip:false,maxRotation:0} } } }
+  });
+  charts.vel = new Chart(document.getElementById('velocity'), {
+    type:'bar',
+    data:{ labels:wkLabels, datasets:[{ data: wk.map(w => plan.filter(t => t.done && parseD(t.done) >= w && parseD(t.done) < new Date(w.getTime()+7*DAY)).length),
+      backgroundColor:'#2E7D32', borderRadius:4 }]},
+    options:{ ...baseOpts, plugins:{legend:{display:false}}, scales:{ y:{min:0,ticks:{stepSize:1,font:{family:'Ubuntu',size:12}}}, x:{ticks:{font:{family:'Ubuntu',size:12},maxRotation:0}} } }
+  });
+  const s = stats();
+  charts.pace = new Chart(document.getElementById('pace'), {
+    type:'bar',
+    data:{ labels:['Required to hit ' + shortD(state.targetDate),'Actual so far','This week'],
+      datasets:[{ data:[s.required, s.actual, s.thisWeek],
+        backgroundColor:['#4B4B4B','#FF8200', s.thisWeek >= s.required ? '#2E7D32' : '#C62828'], borderRadius:4, barPercentage:.55 }]},
+    options:{ ...baseOpts, plugins:{legend:{display:false}}, scales:{ y:{min:0,ticks:{font:{family:'Ubuntu'}}}, x:{ticks:{font:{family:'Ubuntu',size:10}}} } }
+  });
+  charts.work = new Chart(document.getElementById('workload'), {
+    type:'bar',
+    data:{ labels:wkLabels, datasets:[{ data: wk.map(w => plan.filter(t => parseD(t.due) >= w && parseD(t.due) < new Date(w.getTime()+7*DAY)).length),
+      backgroundColor:'#1565C0', borderRadius:4 }]},
+    options:{ ...baseOpts, plugins:{legend:{display:false}}, scales:{ y:{min:0,ticks:{stepSize:1,font:{family:'Ubuntu',size:12}}}, x:{ticks:{font:{family:'Ubuntu',size:12},maxRotation:0}} } }
+  });
+}
+
+/* The board carries no product name of its own. Heading and browser tab both
+   come from state.project, so renaming the board in Settings renames it
+   everywhere and a packaged copy needs no find-and-replace. */
+function renderBoardIdentity(){
+  const name = (state && state.project) ? state.project : 'Sojuli Digital';
+  const parts = name.trim().split(/\s+/);
+  const head = parts.length > 1 ? parts.slice(0,-1).join(' ') : name;
+  const tail = parts.length > 1 ? parts[parts.length-1] : '';
+  const h1 = document.getElementById('boardTitle');
+  if (h1) h1.innerHTML = esc(head) + (tail ? ' <span>' + esc(tail) + '</span>' : '') + ' — Sojuli Digital';
+  document.title = name + ' — Sojuli Digital';
+}
+
+function renderAll(){
+  renderBoardTabs();
+  if (!state) return;
+  renderBoardIdentity();
+  renderStats(); renderLists(); renderBoard(); renderSettings(); renderCharts(); updateSaveBtn(); applyReadOnlyUi();
+}
+boot();
+</script>
+</body>
+</html>

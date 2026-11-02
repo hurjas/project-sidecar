@@ -1,0 +1,14 @@
+# OS and editor noise
+.DS_Store
+Thumbs.db
+__MACOSX/
+
+# Dependencies (tests only)
+node_modules/
+
+# Automatic backups and temp files written by serve-dashboard.js
+tasks.json.bak-*
+tasks.json.tmp-*
+
+# Your boards. Personal data stays on your machine and out of the shared repo.
+boards/
